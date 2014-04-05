@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">JustCast</string>
+    <string name="app_id">ABB80A79</string>
+    <string name="namespace">urn:x-cast:com.google.cast.media</string>
+    <string name="action_settings">Settings</string>
+    <string name="message_to_cast">Message to Cast</string>
+    <string name="media_route_menu_title">Play on</string>
+    <string name="instructions">Talk to me</string>
+    <string name="hello">Hello</string>
+    <string name="justcast_servicename">JustCast Serice</string>
+</resources>
