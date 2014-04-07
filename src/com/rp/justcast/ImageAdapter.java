@@ -35,7 +35,7 @@ public class ImageAdapter extends BaseAdapter {
 	private void initThumbnails() {
 		Log.d(TAG, "initThumbnails");
 		String[] columns = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA };
-		String orderBy = MediaStore.Images.Media.DATE_TAKEN;
+		String orderBy = MediaStore.Images.Media.DATE_TAKEN+ " desc";
 		Cursor imagecursor = mContext.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, null, null, orderBy);
 		int imageColumnIndex = imagecursor.getColumnIndex(MediaStore.Images.Media.DATA);
 
