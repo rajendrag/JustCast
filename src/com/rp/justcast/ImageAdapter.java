@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar.LayoutParams;
 import android.util.Log;
@@ -19,7 +18,7 @@ import com.rp.justcast.ImageCache.ImageCacheParams;
 
 public class ImageAdapter extends BaseAdapter {
 	private static final String TAG = "MainActivity";
-	private ImageWorker imageWorker;
+	protected ImageWorker imageWorker;
 	private final Context mContext;
 	// A static dataset to back the GridView adapter
 	static ArrayList<String> itemList = new ArrayList<String>();
@@ -83,6 +82,7 @@ public class ImageAdapter extends BaseAdapter {
 		} else {
 			imageView = (ImageView) convertView;
 		}
+		
 		loadBitmap(itemList.get(position), imageView);// Load image into
 														// ImageView
 		return imageView;

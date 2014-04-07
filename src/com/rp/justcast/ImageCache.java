@@ -64,7 +64,7 @@ public class ImageCache {
 
 	// Compression settings when writing images to disk cache
 	private static final CompressFormat DEFAULT_COMPRESS_FORMAT = CompressFormat.JPEG;
-	private static final int DEFAULT_COMPRESS_QUALITY = 70;
+	private static final int DEFAULT_COMPRESS_QUALITY = 100;
 	private static final int DISK_CACHE_INDEX = 0;
 
 	// Constants to easily toggle various caches
@@ -147,14 +147,16 @@ public class ImageCache {
 				 */
 				@Override
 				protected void entryRemoved(boolean evicted, String key, BitmapDrawable oldValue, BitmapDrawable newValue) {
+					
 					if (RecyclingBitmapDrawable.class.isInstance(oldValue)) {
 						// The removed entry is a recycling drawable, so notify
 						// it
 						// that it has been removed from the memory cache
 						((RecyclingBitmapDrawable) oldValue).setIsCached(false);
-					} else {
+					} else if (mReusableBitmaps != null && !mReusableBitmaps.isEmpty()) {
 						mReusableBitmaps.add(new SoftReference<Bitmap>(oldValue.getBitmap()));
 					}
+						
 				}
 
 				/**
@@ -322,14 +324,14 @@ public class ImageCache {
 							Log.d(TAG, "Disk cache hit");
 						}
 						inputStream = snapshot.getInputStream(DISK_CACHE_INDEX);
-						if (inputStream != null) {
-							FileDescriptor fd = ((FileInputStream) inputStream).getFD();
+                        if (inputStream != null) {
+                            FileDescriptor fd = ((FileInputStream) inputStream).getFD();
 
-							// Decode bitmap, but we don't want to sample so
-							// give
-							// MAX_VALUE as the target dimensions
-							bitmap = JustCastUtils.decodeSampledBitmapFromUri(data, 100, 100);
-						}
+                            // Decode bitmap, but we don't want to sample so give
+                            // MAX_VALUE as the target dimensions
+                            bitmap = JustCastUtils.decodeSampledBitmapFromDescriptor(
+                                    fd, Integer.MAX_VALUE, Integer.MAX_VALUE, this);
+                        }
 					}
 				} catch (final IOException e) {
 					Log.e(TAG, "getBitmapFromDiskCache - " + e);

@@ -8,10 +8,13 @@ import java.util.List;
 
 import org.apache.http.conn.util.InetAddressUtils;
 
+import android.annotation.TargetApi;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Build.VERSION_CODES;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.MediaRouteActionProvider;
@@ -19,7 +22,6 @@ import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
 import android.support.v7.media.MediaRouter.RouteInfo;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,7 +52,7 @@ public class MainActivity extends ActionBarActivity {
 
 	private static final String TAG = MainActivity.class.getSimpleName();
 	private static final String IMAGE_CACHE_DIR = "thumbs";
-	
+
 	private MediaRouter mMediaRouter;
 	private MediaRouteSelector mMediaRouteSelector;
 	private MediaRouter.Callback mMediaRouterCallback;
@@ -78,17 +80,33 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 
 		getSupportActionBar();
-		
+
 		// Configure Cast device discovery
 		mMediaRouter = MediaRouter.getInstance(getApplicationContext());
 		mMediaRouteSelector = new MediaRouteSelector.Builder().addControlCategory(CastMediaControlIntent.categoryForCast(getResources().getString(R.string.app_id)))
 				.addControlCategory(CastMediaControlIntent.CATEGORY_CAST).build();
 		mMediaRouterCallback = new MyMediaRouterCallback();
 
-		ImageCache.ImageCacheParams cacheParams =
-                new ImageCache.ImageCacheParams(this, IMAGE_CACHE_DIR);
+		/*if (getFragmentManager().findFragmentByTag(TAG) == null) {
+			final FragmentTransaction ft = getFragmentManager().beginTransaction();
+			ft.add(android.R.id.content, new ImageGridFragment() {
 
-        cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
+				@TargetApi(VERSION_CODES.JELLY_BEAN)
+				@Override
+				public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+					String path = itemList.get(position);
+					Toast.makeText(getActivity().getApplicationContext(), path, Toast.LENGTH_LONG).show();
+					Log.d(TAG, "Image clicked sending to chromecast");
+					sendMessage(path);
+				}
+			}, TAG);
+			ft.commit();
+		}*/
+
+		ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(this, IMAGE_CACHE_DIR);
+
+		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of
+													// app memory
 
 		final GridView gridview = (GridView) findViewById(R.id.gridview);
 
@@ -121,11 +139,17 @@ public class MainActivity extends ActionBarActivity {
 			// End media router discovery
 			mMediaRouter.removeCallback(mMediaRouterCallback);
 		}
+		if(imageAdapter != null) {
+			imageAdapter.imageWorker.flushCache();
+		}
 		super.onPause();
 	}
 
 	@Override
 	public void onDestroy() {
+		if(imageAdapter != null) {
+			imageAdapter.imageWorker.clearCache();
+		}
 		teardown();
 		super.onDestroy();
 	}
