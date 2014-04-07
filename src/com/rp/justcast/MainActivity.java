@@ -119,7 +119,7 @@ public class MainActivity extends ActionBarActivity {
 				// Toast.makeText(MainActivity.this, "" + position,
 				// Toast.LENGTH_SHORT).show();
 				String path = imageAdapter.itemList.get(position);
-				Toast.makeText(getApplicationContext(), path, Toast.LENGTH_LONG).show();
+				//Toast.makeText(getApplicationContext(), path, Toast.LENGTH_LONG).show();
 				Log.d(TAG, "Image clicked sending to chromecast");
 				sendMessage(path);
 			}
