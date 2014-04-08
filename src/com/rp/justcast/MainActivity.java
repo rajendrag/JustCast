@@ -8,13 +8,10 @@ import java.util.List;
 
 import org.apache.http.conn.util.InetAddressUtils;
 
-import android.annotation.TargetApi;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Build.VERSION_CODES;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.MediaRouteActionProvider;
@@ -149,6 +146,10 @@ public class MainActivity extends ActionBarActivity {
 	public void onDestroy() {
 		if(imageAdapter != null) {
 			imageAdapter.imageWorker.clearCache();
+		}
+		if (justCastServiceIntent != null) {
+			stopService(justCastServiceIntent);
+			justCastServiceIntent = null;
 		}
 		teardown();
 		super.onDestroy();
@@ -348,14 +349,10 @@ public class MainActivity extends ActionBarActivity {
 					mApiClient.disconnect();
 				}
 				mApplicationStarted = false;
-				if (justCastServiceIntent != null) {
-					stopService(justCastServiceIntent);
-					justCastServiceIntent = null;
-				}
 			}
 			mApiClient = null;
 		}
-		mSelectedDevice = null;
+		//mSelectedDevice = null;
 		mWaitingForReconnect = false;
 	}
 

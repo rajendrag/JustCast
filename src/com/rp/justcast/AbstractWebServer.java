@@ -14,8 +14,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.RandomAccessFile;
 import java.io.PushbackInputStream;
+import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -39,8 +39,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
-
-import android.content.Context;
 
 /**
  * This is a fork of NanoHttpd
@@ -720,7 +718,11 @@ public abstract class AbstractWebServer {
 
     public static final class ResponseException extends Exception {
 
-        private final Response.Status status;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private final Response.Status status;
 
         public ResponseException(Response.Status status, String message) {
             super(message);

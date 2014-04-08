@@ -20,8 +20,7 @@ public class ImageAdapter extends BaseAdapter {
 	private static final String TAG = "MainActivity";
 	protected ImageWorker imageWorker;
 	private final Context mContext;
-	// A static dataset to back the GridView adapter
-	static ArrayList<String> itemList = new ArrayList<String>();
+	public ArrayList<String> itemList = new ArrayList<String>();
 	
 	public ImageAdapter(Context context, FragmentManager fm, ImageCacheParams cacheParams) {
 		super();
@@ -37,14 +36,13 @@ public class ImageAdapter extends BaseAdapter {
 		String[] columns = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA };
 		String orderBy = MediaStore.Images.Media.DATE_TAKEN+ " desc" ;
 		Cursor imagecursor = mContext.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, null, null, orderBy);
-		int imageColumnIndex = imagecursor.getColumnIndex(MediaStore.Images.Media.DATA);
+		//int imageColumnIndex = imagecursor.getColumnIndex(MediaStore.Images.Media.DATA);
 
 		int count = imagecursor.getCount();
 		Log.d(TAG, "Count of images" + count);
 		for (int i = 0; i < count; i++) {
 			imagecursor.moveToPosition(i);
 			int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Images.Media.DATA);
-
 			/*
 			 * thumbnails[i] = MediaStore.Images.Thumbnails.getThumbnail(
 			 * mContext.getContentResolver(), id,

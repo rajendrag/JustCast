@@ -47,7 +47,6 @@ public class RecyclingBitmapDrawable extends BitmapDrawable {
      * @param isDisplayed - Whether the drawable is being displayed or not
      */
     public void setIsDisplayed(boolean isDisplayed) {
-        //BEGIN_INCLUDE(set_is_displayed)
         synchronized (this) {
             if (isDisplayed) {
                 mDisplayRefCount++;
@@ -56,10 +55,7 @@ public class RecyclingBitmapDrawable extends BitmapDrawable {
                 mDisplayRefCount--;
             }
         }
-
-        // Check to see if recycle() can be called
         checkState();
-        //END_INCLUDE(set_is_displayed)
     }
 
     /**
@@ -77,14 +73,10 @@ public class RecyclingBitmapDrawable extends BitmapDrawable {
                 mCacheRefCount--;
             }
         }
-
-        // Check to see if recycle() can be called
         checkState();
-        //END_INCLUDE(set_is_cached)
     }
 
     private synchronized void checkState() {
-        //BEGIN_INCLUDE(check_state)
         // If the drawable cache and display ref counts = 0, and this drawable
         // has been displayed, then recycle
         if (mCacheRefCount <= 0 && mDisplayRefCount <= 0 && mHasBeenDisplayed
@@ -96,7 +88,6 @@ public class RecyclingBitmapDrawable extends BitmapDrawable {
 
             getBitmap().recycle();
         }
-        //END_INCLUDE(check_state)
     }
 
     private synchronized boolean hasValidBitmap() {

@@ -74,10 +74,8 @@ public class ImageWorker {
 	}
 
 	/**
-	 * Load an image specified by the data parameter into an ImageView (override
-	 * {@link ImageWorker#processBitmap(Object)} to define the processing
-	 * logic). A memory and disk cache will be used if an {@link ImageCache} has
-	 * been added using
+	 * Load an image specified by the data parameter into an ImageView. 
+	 * A memory and disk cache will be used if an {@link ImageCache} has been added using
 	 * {@link ImageWorker#addImageCache(android.support.v4.app.FragmentManager, ImageCache.ImageCacheParams)}
 	 * . If the image is found in the memory cache, it is set immediately,
 	 * otherwise an {@link AsyncTask} will be created to asynchronously load the
@@ -103,18 +101,11 @@ public class ImageWorker {
 			// Bitmap found in memory cache
 			imageView.setImageDrawable(value);
 		} else if (cancelPotentialWork(data, imageView)) {
-			// BEGIN_INCLUDE(execute_background_task)
 			final BitmapWorkerTask task = new BitmapWorkerTask(data, imageView);
 			final AsyncDrawable asyncDrawable = new AsyncDrawable(mResources, mLoadingBitmap, task);
 			imageView.setImageDrawable(asyncDrawable);
 
-			// NOTE: This uses a custom version of AsyncTask that has been
-			// pulled from the
-			// framework and slightly modified. Refer to the docs at the top of
-			// the class
-			// for more info on what was changed.
 			task.executeOnExecutor(DUAL_THREAD_EXECUTOR);
-			// END_INCLUDE(execute_background_task)
 		}
 	}
 
@@ -211,7 +202,6 @@ public class ImageWorker {
 			}
 		}
 		return true;
-		// END_INCLUDE(cancel_potential_work)
 	}
 
 	/**
@@ -248,7 +238,6 @@ public class ImageWorker {
 		 */
 		@Override
 		protected BitmapDrawable doInBackground(Void... params) {
-			// BEGIN_INCLUDE(load_bitmap_in_background)
 			if (BuildConfig.DEBUG) {
 				Log.d(TAG, "doInBackground - starting work");
 			}
@@ -286,7 +275,7 @@ public class ImageWorker {
 			// then call the main
 			// process method (as implemented by a subclass)
 			if (bitmap == null && !isCancelled() && getAttachedImageView() != null && !mExitTasksEarly) {
-				bitmap = JustCastUtils.decodeSampledBitmapFromUri(String.valueOf(mData), 100, 100);
+				bitmap = JustCastUtils.decodeSampledBitmapFromUri(String.valueOf(mData), 80, 80);
 			}
 
 			// If the bitmap was processed and the image cache is available,
@@ -308,7 +297,6 @@ public class ImageWorker {
 			}
 
 			return drawable;
-			// END_INCLUDE(load_bitmap_in_background)
 		}
 
 		/**
@@ -316,7 +304,6 @@ public class ImageWorker {
 		 */
 		@Override
 		protected void onPostExecute(BitmapDrawable value) {
-			// BEGIN_INCLUDE(complete_background_work)
 			// if cancel was called on this task or the "exit early" flag is set
 			// then we're done
 			if (isCancelled() || mExitTasksEarly) {
@@ -330,7 +317,6 @@ public class ImageWorker {
 				}
 				setImageDrawable(imageView, value);
 			}
-			// END_INCLUDE(complete_background_work)
 		}
 
 		@Override

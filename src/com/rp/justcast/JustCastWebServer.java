@@ -3,17 +3,15 @@ package com.rp.justcast;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.util.Map;
 import java.util.Random;
 
-import com.rp.justcast.AbstractWebServer.Response.Status;
-
 import android.util.Log;
+
+import com.rp.justcast.AbstractWebServer.Response.Status;
 
 public class JustCastWebServer extends AbstractWebServer {
 	//Thread serverThread;

@@ -46,12 +46,7 @@ import android.util.LruCache;
 
 /**
  * This class handles disk and memory caching of bitmaps in conjunction with the
- * {@link ImageWorker} class and its subclasses. Use
- * {@link ImageCache#getInstance(android.support.v4.app.FragmentManager, ImageCacheParams)}
- * to get an instance of this class, although usually a cache should be added
- * directly to an {@link ImageWorker} by calling
- * {@link ImageWorker#addImageCache(android.support.v4.app.FragmentManager, ImageCacheParams)}
- * .
+ * {@link ImageWorker} class.
  */
 public class ImageCache {
 	private static final String TAG = "ImageCache";
