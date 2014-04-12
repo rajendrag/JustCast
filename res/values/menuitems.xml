@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="left_side_menu">
+        <item>Images</item>
+        <item>Videos</item>
+        <item>Music</item>
+    </string-array>
+</resources>

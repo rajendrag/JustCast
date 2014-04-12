@@ -9,17 +9,6 @@ import android.os.Build.VERSION_CODES;
 
 public class JustCastUtils {
 
-	/*public static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
-		if (imageView != null) {
-			final Drawable drawable = imageView.getDrawable();
-			if (drawable instanceof AsyncDrawable) {
-				final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
-				return asyncDrawable.getBitmapWorkerTask();
-			}
-		}
-		return null;
-	}*/
-
 	/**
      * Decode and sample down a bitmap from a file input stream to the requested width and height.
      *

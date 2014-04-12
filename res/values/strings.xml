@@ -10,4 +10,6 @@
     <string name="instructions">Talk to me</string>
     <string name="hello">Hello</string>
     <string name="justcast_servicename">JustCast Serice</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
 </resources>

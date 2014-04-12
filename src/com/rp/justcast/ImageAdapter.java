@@ -14,17 +14,18 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.rp.justcast.ImageCache.ImageCacheParams;
-
 public class ImageAdapter extends BaseAdapter {
 	private static final String TAG = "MainActivity";
 	protected ImageWorker imageWorker;
 	private final Context mContext;
 	public ArrayList<String> itemList = new ArrayList<String>();
+	private static final String IMAGE_CACHE_DIR = "thumbs";
 	
-	public ImageAdapter(Context context, FragmentManager fm, ImageCacheParams cacheParams) {
+	public ImageAdapter(Context context, FragmentManager fm) {
 		super();
 		mContext = context;
+		ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(context, IMAGE_CACHE_DIR);
+		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
 		imageWorker = new ImageWorker(context);
 		imageWorker.addImageCache(fm, cacheParams);
 		imageWorker.setLoadingImage(R.drawable.empty_photo);

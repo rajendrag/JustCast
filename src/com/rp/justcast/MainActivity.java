@@ -10,9 +10,13 @@ import org.apache.http.conn.util.InetAddressUtils;
 
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.MediaRouteActionProvider;
 import android.support.v7.media.MediaRouteSelector;
@@ -24,9 +28,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.cast.Cast;
@@ -48,7 +52,6 @@ import com.google.android.gms.common.api.Status;
 public class MainActivity extends ActionBarActivity {
 
 	private static final String TAG = MainActivity.class.getSimpleName();
-	private static final String IMAGE_CACHE_DIR = "thumbs";
 
 	private MediaRouter mMediaRouter;
 	private MediaRouteSelector mMediaRouteSelector;
@@ -68,15 +71,51 @@ public class MainActivity extends ActionBarActivity {
 	private String myHost = getIPAddress(true);
 	private int myPort = 8111;
 
-	TextView textTargetUri;
-	ImageView targetImage;
+	private DrawerLayout mDrawerLayout;
+	private ActionBarDrawerToggle mDrawerToggle;
+	private CharSequence mDrawerTitle;
+	private CharSequence mTitle;
+	private String[] mMenuTitles;
+	private ListView mDrawerList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		getSupportActionBar();
+		// getSupportActionBar();
+
+		mTitle = mDrawerTitle = getTitle();
+		mMenuTitles = getResources().getStringArray(R.array.left_side_menu);
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+		// Set the adapter for the list view
+		mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mMenuTitles));
+		// Set the list's click listener
+		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+
+			public void onDrawerClosed(View view) {
+				super.onDrawerClosed(view);
+				getActionBar().setTitle(mTitle);
+				invalidateOptionsMenu();
+			}
+
+			public void onDrawerOpened(View drawerView) {
+				super.onDrawerOpened(drawerView);
+				getActionBar().setTitle(mDrawerTitle);
+				invalidateOptionsMenu();
+			}
+		};
+
+		// Set the drawer toggle as the DrawerListener
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		// mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 		// Configure Cast device discovery
 		mMediaRouter = MediaRouter.getInstance(getApplicationContext());
@@ -84,43 +123,56 @@ public class MainActivity extends ActionBarActivity {
 				.addControlCategory(CastMediaControlIntent.CATEGORY_CAST).build();
 		mMediaRouterCallback = new MyMediaRouterCallback();
 
-		/*if (getFragmentManager().findFragmentByTag(TAG) == null) {
-			final FragmentTransaction ft = getFragmentManager().beginTransaction();
-			ft.add(android.R.id.content, new ImageGridFragment() {
-
-				@TargetApi(VERSION_CODES.JELLY_BEAN)
-				@Override
-				public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-					String path = itemList.get(position);
-					Toast.makeText(getActivity().getApplicationContext(), path, Toast.LENGTH_LONG).show();
-					Log.d(TAG, "Image clicked sending to chromecast");
-					sendMessage(path);
-				}
-			}, TAG);
-			ft.commit();
-		}*/
-
-		ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(this, IMAGE_CACHE_DIR);
-
-		cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of
-													// app memory
-
 		final GridView gridview = (GridView) findViewById(R.id.gridview);
 
 		FragmentManager fm = getFragmentManager();
-		imageAdapter = new ImageAdapter(this, fm, cacheParams);
+		imageAdapter = new ImageAdapter(this, fm);
 		gridview.setAdapter(imageAdapter);
 
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				// Toast.makeText(MainActivity.this, "" + position,
-				// Toast.LENGTH_SHORT).show();
 				String path = imageAdapter.itemList.get(position);
-				//Toast.makeText(getApplicationContext(), path, Toast.LENGTH_LONG).show();
 				Log.d(TAG, "Image clicked sending to chromecast");
 				sendMessage(path);
 			}
 		});
+		if (savedInstanceState == null) {
+			selectItem(0);
+		}
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		// Sync the toggle state after onRestoreInstanceState has occurred.
+		mDrawerToggle.syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		// If the nav drawer is open, hide action items related to the content
+		// view
+		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+		// menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Pass the event to ActionBarDrawerToggle, if it returns
+		// true, then it has handled the app icon touch event
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+		// Handle your other action bar items...
+
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -136,7 +188,7 @@ public class MainActivity extends ActionBarActivity {
 			// End media router discovery
 			mMediaRouter.removeCallback(mMediaRouterCallback);
 		}
-		if(imageAdapter != null) {
+		if (imageAdapter != null) {
 			imageAdapter.imageWorker.flushCache();
 		}
 		super.onPause();
@@ -144,7 +196,7 @@ public class MainActivity extends ActionBarActivity {
 
 	@Override
 	public void onDestroy() {
-		if(imageAdapter != null) {
+		if (imageAdapter != null) {
 			imageAdapter.imageWorker.clearCache();
 		}
 		if (justCastServiceIntent != null) {
@@ -164,6 +216,12 @@ public class MainActivity extends ActionBarActivity {
 		// Set the MediaRouteActionProvider selector for device discovery.
 		mediaRouteActionProvider.setRouteSelector(mMediaRouteSelector);
 		return true;
+	}
+
+	private void selectItem(int position) {
+		mDrawerList.setItemChecked(position, true);
+		setTitle(mMenuTitles[position]);
+		mDrawerLayout.closeDrawer(mDrawerList);
 	}
 
 	/**
@@ -352,7 +410,7 @@ public class MainActivity extends ActionBarActivity {
 			}
 			mApiClient = null;
 		}
-		//mSelectedDevice = null;
+		// mSelectedDevice = null;
 		mWaitingForReconnect = false;
 	}
 
