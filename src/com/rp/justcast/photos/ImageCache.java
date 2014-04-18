@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.rp.justcast;
+package com.rp.justcast.photos;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -27,6 +27,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Set;
+
+import com.rp.justcast.BuildConfig;
+import com.rp.justcast.DiskLruCache;
+import com.rp.justcast.JustCastUtils;
+import com.rp.justcast.RecyclingBitmapDrawable;
+import com.rp.justcast.DiskLruCache.Editor;
+import com.rp.justcast.DiskLruCache.Snapshot;
 
 import android.annotation.TargetApi;
 import android.app.Fragment;
@@ -142,7 +149,7 @@ public class ImageCache {
 				 */
 				@Override
 				protected void entryRemoved(boolean evicted, String key, BitmapDrawable oldValue, BitmapDrawable newValue) {
-					
+
 					if (RecyclingBitmapDrawable.class.isInstance(oldValue)) {
 						// The removed entry is a recycling drawable, so notify
 						// it
@@ -151,7 +158,7 @@ public class ImageCache {
 					} else if (mReusableBitmaps != null && !mReusableBitmaps.isEmpty()) {
 						mReusableBitmaps.add(new SoftReference<Bitmap>(oldValue.getBitmap()));
 					}
-						
+
 				}
 
 				/**
@@ -296,6 +303,8 @@ public class ImageCache {
 	 * 
 	 * @param data
 	 *            Unique identifier for which item to get
+	 * @param reqWidth
+	 * @param reqHeight
 	 * @return The bitmap if found in cache, null otherwise
 	 */
 	public Bitmap getBitmapFromDiskCache(String data) {
@@ -319,14 +328,15 @@ public class ImageCache {
 							Log.d(TAG, "Disk cache hit");
 						}
 						inputStream = snapshot.getInputStream(DISK_CACHE_INDEX);
-                        if (inputStream != null) {
-                            FileDescriptor fd = ((FileInputStream) inputStream).getFD();
+						if (inputStream != null) {
+							FileDescriptor fd = ((FileInputStream) inputStream).getFD();
 
-                            // Decode bitmap, but we don't want to sample so give
-                            // MAX_VALUE as the target dimensions
-                            bitmap = JustCastUtils.decodeSampledBitmapFromDescriptor(
-                                    fd, Integer.MAX_VALUE, Integer.MAX_VALUE, this);
-                        }
+							// Decode bitmap, but we don't want to sample so
+							// give
+							// MAX_VALUE as the target dimensions
+							bitmap = JustCastUtils.decodeSampledBitmapFromDescriptor(fd, Integer.MAX_VALUE, Integer.MAX_VALUE, this);
+							//bitmap = JustCastUtils.decodeSampledBitmapFromDescriptor(fd, reqWidth, reqHeight, this);
+						}
 					}
 				} catch (final IOException e) {
 					Log.e(TAG, "getBitmapFromDiskCache - " + e);
@@ -349,7 +359,7 @@ public class ImageCache {
 	 *            - BitmapFactory.Options with out* options populated
 	 * @return Bitmap that case be used for inBitmap
 	 */
-	protected Bitmap getBitmapFromReusableSet(BitmapFactory.Options options) {
+	public Bitmap getBitmapFromReusableSet(BitmapFactory.Options options) {
 		// BEGIN_INCLUDE(get_bitmap_from_reusable_set)
 		Bitmap bitmap = null;
 

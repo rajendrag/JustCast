@@ -40,18 +40,20 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 
+import android.util.Log;
+
 /**
  * This is a fork of NanoHttpd
  *
  */
 public abstract class AbstractWebServer {
-	
+	private static final String TAG = "JustCastWebServer";
 	/**
      * Maximum time to wait on Socket.getInputStream().read() (in milliseconds)
      * This is required as the Keep-Alive HTTP connections would otherwise
      * block the socket reading thread forever (or as long the browser is open).
      */
-    public static final int SOCKET_READ_TIMEOUT = 5000;
+    public static final int SOCKET_READ_TIMEOUT = 2000;
     /**
      * Common mime type for dynamic content: plain text
      */
@@ -139,7 +141,7 @@ public abstract class AbstractWebServer {
                     try {
                         final Socket finalAccept = myServerSocket.accept();
                         registerConnection(finalAccept);
-                        finalAccept.setSoTimeout(SOCKET_READ_TIMEOUT);
+                        //finalAccept.setSoTimeout(SOCKET_READ_TIMEOUT);
                         final InputStream inputStream = finalAccept.getInputStream();
                         asyncRunner.exec(new Runnable() {
                             @Override
@@ -602,7 +604,7 @@ public abstract class AbstractWebServer {
                     }
                 }
 
-                pw.print("Connection: keep-alive\r\n");
+                //pw.print("Connection: keep-alive\r\n");
 
                 if (requestMethod != Method.HEAD && chunkedTransfer) {
                     sendAsChunked(outputStream, pw);
@@ -612,6 +614,7 @@ public abstract class AbstractWebServer {
                 outputStream.flush();
                 safeClose(data);
             } catch (IOException ioe) {
+            	Log.e(TAG, "Error while writing response", ioe);
                 // Couldn't write? No can do.
             }
         }

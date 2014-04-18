@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package com.rp.justcast;
+package com.rp.justcast.photos;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.rp.justcast.BuildConfig;
+import com.rp.justcast.JustCastUtils;
 
 import android.app.FragmentManager;
 import android.content.Context;
@@ -275,7 +278,7 @@ public class ImageWorker {
 			// then call the main
 			// process method (as implemented by a subclass)
 			if (bitmap == null && !isCancelled() && getAttachedImageView() != null && !mExitTasksEarly) {
-				bitmap = JustCastUtils.decodeSampledBitmapFromUri(String.valueOf(mData), 80, 80);
+				bitmap = JustCastUtils.decodeSampledBitmapFromUri(String.valueOf(mData), 110, 110);
 			}
 
 			// If the bitmap was processed and the image cache is available,

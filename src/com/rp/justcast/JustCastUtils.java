@@ -1,11 +1,24 @@
 package com.rp.justcast;
 
 import java.io.FileDescriptor;
+import java.io.IOException;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
+import android.view.Display;
+import android.view.WindowManager;
+import android.widget.Toast;
+
+import com.google.sample.castcompanionlibrary.cast.exceptions.CastException;
+import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
+import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
+import com.rp.justcast.photos.ImageCache;
 
 public class JustCastUtils {
 
@@ -25,6 +38,7 @@ public class JustCastUtils {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
+        options.inScaled = false;
         BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
 
         // Calculate inSampleSize
@@ -47,6 +61,7 @@ public class JustCastUtils {
 		// First decode with inJustDecodeBounds=true to check dimensions
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
+		options.inScaled = false;
 		BitmapFactory.decodeFile(path, options);
 
 		// Calculate inSampleSize
@@ -79,6 +94,27 @@ public class JustCastUtils {
 		return inSampleSize;
 	}
 	
+	
+	 /**
+     * Shows a (long) toast
+     *
+     * @param context
+     * @param msg
+     */
+    public static void showToast(Context context, String msg) {
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Shows a (long) toast.
+     *
+     * @param context
+     * @param resourceId
+     */
+    public static void showToast(Context context, int resourceId) {
+        Toast.makeText(context, context.getString(resourceId), Toast.LENGTH_LONG).show();
+    }
+    
 	public static boolean hasFroyo() {
         // Can use static final constants like FROYO, declared in later versions
         // of the OS since they are inlined at compile time. This is guaranteed behavior.
@@ -103,6 +139,64 @@ public class JustCastUtils {
 
     public static boolean hasKitKat() {
         return Build.VERSION.SDK_INT >= VERSION_CODES.KITKAT;
+    }
+    
+    public static void handleException(Context context, Exception e) {
+        int resourceId = 0;
+        if (e instanceof TransientNetworkDisconnectionException) {
+            // temporary loss of connectivity
+            resourceId = R.string.connection_lost_retry;
+
+        } else if (e instanceof NoConnectionException) {
+            // connection gone
+            resourceId = R.string.connection_lost;
+        } else if (e instanceof RuntimeException ||
+                e instanceof IOException ||
+                e instanceof CastException) {
+            // something more serious happened
+            resourceId = R.string.failed_to_perfrom_action;
+        } else {
+            // well, who knows!
+            resourceId = R.string.failed_to_perfrom_action;
+        }
+        if (resourceId > 0) {
+            showOopsDialog(context, resourceId);
+        }
+    }
+    
+    /**
+     * Shows an "Oops" error dialog with a text provided by a resource ID
+     *
+     * @param context
+     * @param resourceId
+     */
+    public static final void showOopsDialog(Context context, int resourceId) {
+        new AlertDialog.Builder(context).setTitle(R.string.oops)
+                .setMessage(context.getString(resourceId))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                })
+                .setIcon(R.drawable.ic_action_alerts_and_states_warning)
+                .create()
+                .show();
+    }
+
+    /**
+     * Returns the screen/display size
+     *
+     * @param ctx
+     * @return
+     */
+    @SuppressWarnings("deprecation")
+    public static Point getDisplaySize(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        int width = display.getWidth();
+        int height = display.getHeight();
+        return new Point(width, height);
     }
 
 }

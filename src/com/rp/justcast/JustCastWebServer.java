@@ -11,6 +11,7 @@ import java.util.Random;
 
 import android.util.Log;
 
+import com.rp.justcast.AbstractWebServer.Response;
 import com.rp.justcast.AbstractWebServer.Response.Status;
 
 public class JustCastWebServer extends AbstractWebServer {
@@ -63,16 +64,17 @@ public class JustCastWebServer extends AbstractWebServer {
 			FileNameMap fileNameMap = URLConnection.getFileNameMap();
 			String mimeType = fileNameMap.getContentTypeFor(path);
 
-			Response streamResponse = new Response(Status.OK, mimeType, mbuffer);
+			Response streamResponse = new Response(Status.PARTIAL_CONTENT, mimeType, mbuffer);
 			Random rnd = new Random();
 			String etag = Integer.toHexString(rnd.nextInt());
 			streamResponse.addHeader("ETag", etag);
-			streamResponse.addHeader("Connection", "Keep-alive");
-
+			streamResponse.addHeader("Connection", "close");
+			//streamResponse.setChunkedTransfer(true); 
+            Log.d("TEAONLY", "Starting streaming server");
 			return streamResponse;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage(), e);
+			return new Response(Response.Status.NOT_FOUND, MIME_PLAINTEXT, e.getMessage());
 		}
 
 	}
