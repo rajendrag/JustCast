@@ -9,8 +9,10 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
+import android.provider.MediaStore.Video.Thumbnails;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -198,5 +200,10 @@ public class JustCastUtils {
         int height = display.getHeight();
         return new Point(width, height);
     }
+
+	public static Bitmap decodeSampledBitmapFromVideo(String videoPath) {
+		Bitmap bmThumbnail = ThumbnailUtils.createVideoThumbnail(videoPath, Thumbnails.MICRO_KIND);
+		return bmThumbnail;
+	}
 
 }

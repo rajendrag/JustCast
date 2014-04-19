@@ -30,7 +30,7 @@ public class JustCastService extends Service {
 		        if (rootDirs.isEmpty()) {
 		            rootDirs.add(new File(".").getAbsoluteFile());
 		        }
-			webServer = new JustCastNewServer(myHost, myPort, rootDirs, quiet);
+			webServer = new JustCastWebServer(myHost, myPort, rootDirs, quiet);
 			try {
 				webServer.start();
 				Log.d(TAG, "Web server started");

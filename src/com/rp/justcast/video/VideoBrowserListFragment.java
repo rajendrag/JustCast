@@ -98,7 +98,7 @@ public class VideoBrowserListFragment extends ListFragment implements
         return new VideoItemLoader(getActivity());
     }
 
-    public static VideoBrowserListFragment newInstance() {
+	public static VideoBrowserListFragment newInstance() {
         VideoBrowserListFragment f = new VideoBrowserListFragment();
         Bundle b = new Bundle();
         f.setArguments(b);

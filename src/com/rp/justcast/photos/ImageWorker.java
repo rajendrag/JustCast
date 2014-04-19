@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.rp.justcast.BuildConfig;
 import com.rp.justcast.JustCastUtils;
 
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -35,6 +34,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -230,10 +230,16 @@ public class ImageWorker {
 	private class BitmapWorkerTask extends AsyncTask<Void, Void, BitmapDrawable> {
 		private Object mData;
 		private final WeakReference<ImageView> imageViewReference;
+		private boolean videoThumbnail;
 
 		public BitmapWorkerTask(Object data, ImageView imageView) {
+			this(data, imageView, false);
+		}
+		
+		public BitmapWorkerTask(Object data, ImageView imageView, boolean videoThumbnail) {
 			mData = data;
 			imageViewReference = new WeakReference<ImageView>(imageView);
+			this.videoThumbnail = videoThumbnail;
 		}
 
 		/**
@@ -278,7 +284,11 @@ public class ImageWorker {
 			// then call the main
 			// process method (as implemented by a subclass)
 			if (bitmap == null && !isCancelled() && getAttachedImageView() != null && !mExitTasksEarly) {
-				bitmap = JustCastUtils.decodeSampledBitmapFromUri(String.valueOf(mData), 110, 110);
+				if(videoThumbnail) {
+					bitmap = JustCastUtils.decodeSampledBitmapFromVideo(String.valueOf(mData));
+				} else {
+					bitmap = JustCastUtils.decodeSampledBitmapFromUri(String.valueOf(mData), 110, 110);
+				}
 			}
 
 			// If the bitmap was processed and the image cache is available,
@@ -467,5 +477,26 @@ public class ImageWorker {
 
 	public void closeCache() {
 		new CacheAsyncTask().execute(MESSAGE_CLOSE);
+	}
+
+	public void loadVideoThumbNail(String path, ImageView imageView) {
+		if (path == null) {
+			return;
+		}
+		BitmapDrawable value = null;
+		if (mImageCache != null) {
+			value = mImageCache.getBitmapFromMemCache(path);
+		}
+
+		if (value != null) {
+			// Bitmap found in memory cache
+			imageView.setImageDrawable(value);
+		} else if (cancelPotentialWork(path, imageView)) {
+			final BitmapWorkerTask task = new BitmapWorkerTask(path, imageView, true);
+			final AsyncDrawable asyncDrawable = new AsyncDrawable(mResources, mLoadingBitmap, task);
+			imageView.setImageDrawable(asyncDrawable);
+
+			task.executeOnExecutor(DUAL_THREAD_EXECUTOR);
+		}
 	}
 }

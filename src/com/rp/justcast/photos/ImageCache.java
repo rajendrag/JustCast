@@ -28,16 +28,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.rp.justcast.BuildConfig;
-import com.rp.justcast.DiskLruCache;
-import com.rp.justcast.JustCastUtils;
-import com.rp.justcast.RecyclingBitmapDrawable;
-import com.rp.justcast.DiskLruCache.Editor;
-import com.rp.justcast.DiskLruCache.Snapshot;
-
 import android.annotation.TargetApi;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -48,8 +39,15 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.util.LruCache;
+
+import com.rp.justcast.BuildConfig;
+import com.rp.justcast.DiskLruCache;
+import com.rp.justcast.JustCastUtils;
+import com.rp.justcast.RecyclingBitmapDrawable;
 
 /**
  * This class handles disk and memory caching of bitmaps in conjunction with the

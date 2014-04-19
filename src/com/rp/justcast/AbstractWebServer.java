@@ -3,6 +3,7 @@ package com.rp.justcast;
  * Copyright (c) 2012-2013 by Paul S. Hawke, 2001,2005-2013 by Jarno Elonen, 2010 by Konstantinos Togias
  * All rights reserved.
  */
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -148,7 +149,7 @@ public abstract class AbstractWebServer {
                             public void run() {
                                 OutputStream outputStream = null;
                                 try {
-                                    outputStream = finalAccept.getOutputStream();
+                                    outputStream = new BufferedOutputStream( finalAccept.getOutputStream(), 32*1024);
                                     TempFileManager tempFileManager = tempFileManagerFactory.create();
                                     HTTPSession session = new HTTPSession(tempFileManager, inputStream, outputStream, finalAccept.getInetAddress());
                                     while (!finalAccept.isClosed()) {
@@ -581,26 +582,29 @@ public abstract class AbstractWebServer {
             String mime = mimeType;
             SimpleDateFormat gmtFrmt = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US);
             gmtFrmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-
+            StringBuilder headers = new StringBuilder();
             try {
                 if (status == null) {
                     throw new Error("sendResponse(): Status can't be null.");
                 }
-                PrintWriter pw = new PrintWriter(outputStream);
+                PrintWriter pw = new PrintWriter(new BufferedOutputStream(outputStream, 32*1024));
                 pw.print("HTTP/1.1 " + status.getDescription() + " \r\n");
-
+                headers.append("HTTP/1.1 " + status.getDescription() + " \r\n");
                 if (mime != null) {
                     pw.print("Content-Type: " + mime + "\r\n");
+                    headers.append("Content-Type: " + mime + "\r\n");
                 }
 
                 if (header == null || header.get("Date") == null) {
                     pw.print("Date: " + gmtFrmt.format(new Date()) + "\r\n");
+                    headers.append("Date: " + gmtFrmt.format(new Date()) + "\r\n");
                 }
 
                 if (header != null) {
                     for (String key : header.keySet()) {
                         String value = header.get(key);
                         pw.print(key + ": " + value + "\r\n");
+                        headers.append(key + ": " + value + "\r\n");
                     }
                 }
 
@@ -611,7 +615,7 @@ public abstract class AbstractWebServer {
                 } else {
                     sendAsFixedLength(outputStream, pw);
                 }
-                outputStream.flush();
+                //outputStream.flush();
                 safeClose(data);
             } catch (IOException ioe) {
             	Log.e(TAG, "Error while writing response", ioe);
@@ -623,7 +627,7 @@ public abstract class AbstractWebServer {
             pw.print("Transfer-Encoding: chunked\r\n");
             pw.print("\r\n");
             pw.flush();
-            int BUFFER_SIZE = 16 * 1024;
+            int BUFFER_SIZE = 64 * 1024;
             byte[] CRLF = "\r\n".getBytes();
             byte[] buff = new byte[BUFFER_SIZE];
             int read;
@@ -633,17 +637,19 @@ public abstract class AbstractWebServer {
                 outputStream.write(CRLF);
             }
             outputStream.write(String.format("0\r\n\r\n").getBytes());
+            outputStream.flush();
         }
 
         private void sendAsFixedLength(OutputStream outputStream, PrintWriter pw) throws IOException {
             int pending = data != null ? data.available() : 0; // This is to support partial sends, see serveFile()
+            Log.d(TAG, "Sending pending data "+pending);
             pw.print("Content-Length: "+pending+"\r\n");
 
             pw.print("\r\n");
             pw.flush();
 
             if (requestMethod != Method.HEAD && data != null) {
-                int BUFFER_SIZE = 16 * 1024;
+                int BUFFER_SIZE = 64 * 1024;
                 byte[] buff = new byte[BUFFER_SIZE];
                 while (pending > 0) {
                     int read = data.read(buff, 0, ((pending > BUFFER_SIZE) ? BUFFER_SIZE : pending));
@@ -651,8 +657,9 @@ public abstract class AbstractWebServer {
                         break;
                     }
                     outputStream.write(buff, 0, read);
-
+                    outputStream.flush();
                     pending -= read;
+                    Log.d(TAG, "Sent "+read);
                 }
             }
         }

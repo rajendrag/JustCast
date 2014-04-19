@@ -62,6 +62,7 @@ public class VideoProvider {
 			String path = videoCursor.getString(dataColumnIndex);
 			String title = videoCursor.getString(titleIndex);
 			MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+			movieMetadata.putString("VIDEO_PATH", path);
 			movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, title);
 			movieMetadata.putString(MediaMetadata.KEY_TITLE, title);
 			movieMetadata.putString(MediaMetadata.KEY_STUDIO, title);

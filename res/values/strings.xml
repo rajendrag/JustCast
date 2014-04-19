@@ -34,4 +34,5 @@
     <string name="video_error_media_load_timeout">Timeout</string>
     <string name="video_error_server_unaccessible">Server not responding</string>
     <string name="video_error_unknown_error">Video can not be played</string>
+    <string name="no_device_to_cast">No Device selected to cast, Please use the cast icon at the top to select the device</string>
 </resources>

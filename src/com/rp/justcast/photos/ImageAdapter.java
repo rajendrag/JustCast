@@ -2,6 +2,8 @@ package com.rp.justcast.photos;
 
 import java.util.ArrayList;
 
+import com.rp.justcast.JustCast;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -25,10 +27,10 @@ public class ImageAdapter extends BaseAdapter {
     private int mNumColumns = 0;
     private int mActionBarHeight = 0;
 	
-	public ImageAdapter(Context context, ImageWorker imageWorker) {
+	public ImageAdapter(Context context) {
 		super();
         mContext = context;
-        this.imageWorker = imageWorker;
+        imageWorker = JustCast.getImageWorker();
         // Calculate ActionBar height
         TypedValue tv = new TypedValue();
         if (context.getTheme().resolveAttribute(

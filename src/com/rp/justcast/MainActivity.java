@@ -1,19 +1,13 @@
 package com.rp.justcast;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.http.conn.util.InetAddressUtils;
-
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -32,9 +26,10 @@ import android.widget.Toast;
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.callbacks.IVideoCastConsumer;
 import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
+import com.rp.justcast.photos.ImageWorker;
 import com.rp.justcast.photos.PhotosFragment;
 import com.rp.justcast.settings.CastPreference;
-import com.rp.justcast.video.VideosFragment;
+import com.rp.justcast.video.VideoBrowserListFragment;
 
 /**
  * Main activity to send messages to the receiver.
@@ -58,6 +53,7 @@ public class MainActivity extends ActionBarActivity {
 	private IVideoCastConsumer mCastConsumer;
 	// private MiniController mMini;
 	private MenuItem mediaRouteMenuItem;
+	private ImageWorker imageWorker;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +64,7 @@ public class MainActivity extends ActionBarActivity {
 		ActionBar actionBar = getSupportActionBar();
 
 		mCastManager = JustCast.getCastManager(this);
-
+		imageWorker = JustCast.initImageWorker(getSupportFragmentManager());
 		// -- Adding MiniController
 		/*
 		 * mMini = (MiniController) findViewById(R.id.miniController1);
@@ -224,7 +220,7 @@ public class MainActivity extends ActionBarActivity {
 			mCastManager.addVideoCastConsumer(mCastConsumer);
 			mCastManager.incrementUiCounter();
 		}
-
+		imageWorker.setExitTasksEarly(false);
 		super.onResume();
 	}
 
@@ -236,6 +232,9 @@ public class MainActivity extends ActionBarActivity {
 		}
 		mCastManager.decrementUiCounter();
 		mCastManager.removeVideoCastConsumer(mCastConsumer);
+		imageWorker.setPauseWork(false);
+		imageWorker.setExitTasksEarly(true);
+		imageWorker.flushCache();
 		super.onPause();
 	}
 
@@ -252,8 +251,7 @@ public class MainActivity extends ActionBarActivity {
 			// mCastManager.removeMiniController(mMini);
 			mCastManager.clearContext(this);
 		}
-
-		// teardown();
+		imageWorker.closeCache();
 		super.onDestroy();
 	}
 
@@ -282,14 +280,14 @@ public class MainActivity extends ActionBarActivity {
 		switch (position) {
 		case 0:
 			Fragment fg = new PhotosFragment();
-			FragmentTransaction tx = getFragmentManager().beginTransaction();
+			FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
 			tx.replace(R.id.content_frame, fg);
 			tx.commit();
 			break;
 		case 1:
-			Fragment videoFragment = new VideosFragment();
-			FragmentTransaction vTx = getFragmentManager().beginTransaction();
-			vTx. replace(R.id.content_frame, videoFragment);
+			ListFragment lf = VideoBrowserListFragment.newInstance();
+			FragmentTransaction vTx = getSupportFragmentManager().beginTransaction();
+			vTx. replace(R.id.content_frame, lf);
 			vTx.commit();
 			break;
 		default:
