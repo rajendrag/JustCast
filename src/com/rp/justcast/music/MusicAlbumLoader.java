@@ -66,7 +66,7 @@ public class MusicAlbumLoader extends AsyncTaskLoader<List<MusicAlbum>> {
 				String songArtist = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
 				String duration = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
 				String size = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
-				MusicAlbum album = new MusicAlbum(songId, songTitle, songArtist, songArt);
+				MusicAlbum album = new MusicAlbum(songArt, songTitle, songArtist, songArt);
 				album.setDuration(duration);
 				album.setSize(size);
 				songsInAlbum.add(album);

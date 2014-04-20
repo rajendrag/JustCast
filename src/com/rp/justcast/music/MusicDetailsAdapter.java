@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
-import com.google.android.gms.cast.MediaInfo;
 import com.rp.justcast.JustCast;
 import com.rp.justcast.R;
 import com.rp.justcast.photos.ImageWorker;
@@ -28,50 +27,6 @@ public class MusicDetailsAdapter extends ArrayAdapter<MusicAlbum> {
 		mContext = context;
 		imageWorker = JustCast.getImageWorker();
 	}
-
-	/*private void initMusicInfo() {
-		String[] proj = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.ARTIST,
-				MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.SIZE };
-		Cursor musicCursor = null;
-		try {
-			musicCursor = mContext.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, proj, MediaStore.Audio.Media.ALBUM_ID+ "=?", 
-	                new String[] {String.valueOf(albumId)}, null);
-			int count = musicCursor.getCount();
-			// Log.d(TAG, "Count of images" + count);
-			for (int i = 0; i < count; i++) {
-				musicCursor.moveToPosition(i);
-				
-				String songId = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media._ID));
-				String songTitle = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME));
-				String songArt = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-				String songArtist = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-				String duration = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-				String size = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
-				MusicAlbum album = new MusicAlbum(songId, songTitle, songArtist, songArt);
-				album.setDuration(duration);
-				album.setSize(size);
-				songsList.add(album);
-				
-			}
-		} finally {
-			if (null != musicCursor) {
-				musicCursor.close();
-			}
-		}
-
-	}*/
-
-	/*public int getCount() {
-		return songsList.size();
-	}
-
-	public Object getItem(int position) {
-		return songsList.get(position);
-	}
-
-	public long getItemId(int position) {
-		return position;
-	}*/
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
