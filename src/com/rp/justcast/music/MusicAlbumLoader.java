@@ -10,16 +10,19 @@ import android.support.v4.content.AsyncTaskLoader;
 
 public class MusicAlbumLoader extends AsyncTaskLoader<List<MusicAlbum>> {
 	Context mContext;
-	boolean isAlbumLoader;
+	String albumId;
 	
-	public MusicAlbumLoader(Context context, boolean isAlbumLoader) {
+	public MusicAlbumLoader(Context context, String albumId) {
 		super(context);
 		mContext = context;
-		this.isAlbumLoader = isAlbumLoader;
+		this.albumId = albumId;
 	}
 
 	@Override
 	public List<MusicAlbum> loadInBackground() {
+		if (null != albumId) {
+			return getSongsInAlbum();
+		}
 		List<MusicAlbum> albumList = new ArrayList<MusicAlbum>();
 		Cursor musicCursor = null;
 		try {
@@ -42,6 +45,39 @@ public class MusicAlbumLoader extends AsyncTaskLoader<List<MusicAlbum>> {
 			}
 		}
 		return albumList;
+	}
+	
+	private List<MusicAlbum> getSongsInAlbum() {
+		List<MusicAlbum> songsInAlbum = new ArrayList<MusicAlbum>();
+		String[] proj = {MediaStore.Audio.Media._ID, MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.ARTIST,
+				MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.SIZE };
+		Cursor musicCursor = null;
+		try {
+			musicCursor = mContext.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, proj, MediaStore.Audio.Media.ALBUM_ID+ "=?", 
+	                new String[] {String.valueOf(albumId)}, null);
+			int count = musicCursor.getCount();
+			// Log.d(TAG, "Count of images" + count);
+			for (int i = 0; i < count; i++) {
+				musicCursor.moveToPosition(i);
+				
+				String songId = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media._ID));
+				String songTitle = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME));
+				String songArt = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+				String songArtist = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+				String duration = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+				String size = musicCursor.getString(musicCursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
+				MusicAlbum album = new MusicAlbum(songId, songTitle, songArtist, songArt);
+				album.setDuration(duration);
+				album.setSize(size);
+				songsInAlbum.add(album);
+				
+			}
+		} finally {
+			if (null != musicCursor) {
+				musicCursor.close();
+			}
+		}
+		return songsInAlbum;
 	}
 	
 	@Override

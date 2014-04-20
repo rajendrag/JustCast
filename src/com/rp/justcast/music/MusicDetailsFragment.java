@@ -143,7 +143,7 @@ public class MusicDetailsFragment extends ListFragment implements LoaderManager.
 
 	@Override
 	public Loader<List<MusicAlbum>> onCreateLoader(int arg0, Bundle arg1) {
-		return new MusicAlbumLoader(getActivity(), false);
+		return new MusicAlbumLoader(getActivity(), albumId);
 	}
 
 	@Override
