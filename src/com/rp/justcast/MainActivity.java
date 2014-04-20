@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.callbacks.IVideoCastConsumer;
 import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
+import com.rp.justcast.music.MusicFragment;
 import com.rp.justcast.photos.ImageWorker;
 import com.rp.justcast.photos.PhotosFragment;
 import com.rp.justcast.settings.CastPreference;
@@ -289,6 +290,12 @@ public class MainActivity extends ActionBarActivity {
 			FragmentTransaction vTx = getSupportFragmentManager().beginTransaction();
 			vTx. replace(R.id.content_frame, lf);
 			vTx.commit();
+			break;
+		case 2:
+			Fragment mf = new MusicFragment();
+			FragmentTransaction mTx = getSupportFragmentManager().beginTransaction();
+			mTx. replace(R.id.content_frame, mf);
+			mTx.commit();
 			break;
 		default:
 			break;

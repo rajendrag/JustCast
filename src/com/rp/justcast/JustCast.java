@@ -29,7 +29,12 @@ public class JustCast extends Application {
     
     private static String myHost = "";
 	private static int myPort;
-
+	
+	public static final String MUSIC_CONTENT_TYPE = "audio/mpeg";
+	public static final String KEY_AUDIO_PATH = "AUDIO_PATH";
+	public static final String KEY_VIDEO_PATH = "VIDIO_PATH";
+	public static final String KEY_AUDIO_PATH_URL	= "AUDIO_PATH_URL";
+	public static final String KEY_VIDEO_PATH_URL	= "VIDEO_PATH_URL";
 
     /*
      * (non-Javadoc)

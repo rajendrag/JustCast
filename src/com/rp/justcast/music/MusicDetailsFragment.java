@@ -1,0 +1,165 @@
+package com.rp.justcast.music;
+
+import java.util.List;
+
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.util.Log;
+import android.view.View;
+import android.widget.ListView;
+
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.common.images.WebImage;
+import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
+import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
+import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
+import com.rp.justcast.JustCast;
+import com.rp.justcast.JustCastUtils;
+import com.rp.justcast.R;
+
+public class MusicDetailsFragment extends ListFragment implements LoaderManager.LoaderCallbacks<List<MusicAlbum>> {
+	private static final String TAG = MusicDetailsFragment.class.getSimpleName();
+
+	MusicDetailsAdapter musicDetailsAdapter = null;
+	ListView listView = null;
+
+	String albumId;
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		getListView().setFastScrollEnabled(true);
+		musicDetailsAdapter = new MusicDetailsAdapter(getActivity());
+		setEmptyText(getString(R.string.no_video_found));
+		setListAdapter(musicDetailsAdapter);
+		setListShown(false);
+		getLoaderManager().initLoader(0, null, this);
+	}
+
+	/*
+	 * @Override public View onCreateView(LayoutInflater inflater, ViewGroup
+	 * container, Bundle savedInstanceState) { final View v =
+	 * inflater.inflate(R.layout.music_details_view, container, false); listView
+	 * = (ListView) v.findViewById(R.id.music_details);
+	 * listView.setAdapter(musicAlbumsAdapter);
+	 * listView.setOnItemClickListener(this); return v; }
+	 */
+
+	/*
+	 * @TargetApi(VERSION_CODES.JELLY_BEAN)
+	 * 
+	 * @Override public void onItemClick(AdapterView<?> parent, View v, int
+	 * position, long id) {
+	 * 
+	 * // JustCastUtils.showToast(getActivity(), //
+	 * mAdapter.itemList.get(position)); if (listView != null) {
+	 * listView.requestFocusFromTouch(); listView.setSelection((int)
+	 * (listView.getAdapter()).getItemId(position)); } VideoCastManager
+	 * castManager = JustCast.getCastManager(getActivity());
+	 * 
+	 * if (!castManager.isConnected()) { JustCastUtils.showToast(getActivity(),
+	 * R.string.no_device_to_cast); return; }
+	 * 
+	 * MusicAlbum album = (MusicAlbum) musicAlbumsAdapter.getItem(position);
+	 * MediaMetadata mm = new
+	 * MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
+	 * mm.putString(MediaMetadata.KEY_ALBUM_TITLE, album.getAlbumTitle());
+	 * mm.addImage(new
+	 * WebImage(Uri.parse(JustCast.addJustCastServerParam(album.getAlbumArt
+	 * ())))); // mm.putString(MediaMetadata.KEY_TITLE, //
+	 * musicCursor.getString(displayNameIndex)); String path =
+	 * JustCast.addJustCastServerParam(album.getAlbumId()); Log.d(TAG,
+	 * "Music track path=>" + path); MediaInfo mediaInfo = new
+	 * MediaInfo.Builder(
+	 * path).setStreamType(MediaInfo.STREAM_TYPE_BUFFERED).setContentType
+	 * (getMediaType()).setMetadata(mm).build(); try {
+	 * castManager.loadMedia(mediaInfo, true, 0); } catch
+	 * (TransientNetworkDisconnectionException e) { // e.printStackTrace(); }
+	 * catch (NoConnectionException e) { // e.printStackTrace(); }
+	 * 
+	 * // sendMessage }
+	 */
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		MusicAlbum selectedMedia = musicDetailsAdapter.getItem(position);
+		handleNavigation(selectedMedia, false);
+	}
+
+	private void handleNavigation(MusicAlbum album, boolean autoStart) {
+		// JustCastUtils.showToast(getActivity(),
+		// mAdapter.itemList.get(position));
+		if (listView != null) {
+			listView.requestFocusFromTouch();
+			//listView.setSelection((int) (listView.getAdapter()).getItemId(position));
+		}
+		VideoCastManager castManager = JustCast.getCastManager(getActivity());
+
+		if (!castManager.isConnected()) {
+			JustCastUtils.showToast(getActivity(), R.string.no_device_to_cast);
+			return;
+		}
+
+		MediaMetadata mm = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
+		mm.putString(MediaMetadata.KEY_ALBUM_TITLE, album.getAlbumTitle());
+		mm.addImage(new WebImage(Uri.parse(JustCast.addJustCastServerParam(album.getAlbumArt()))));
+		// mm.putString(MediaMetadata.KEY_TITLE,
+		// musicCursor.getString(displayNameIndex));
+		String path = JustCast.addJustCastServerParam(album.getAlbumId());
+		Log.d(TAG, "Music track path=>" + path);
+		MediaInfo mediaInfo = new MediaInfo.Builder(path).setStreamType(MediaInfo.STREAM_TYPE_BUFFERED).setContentType(getMediaType()).setMetadata(mm).build();
+		try {
+			castManager.loadMedia(mediaInfo, true, 0);
+		} catch (TransientNetworkDisconnectionException e) {
+			// e.printStackTrace();
+		} catch (NoConnectionException e) {
+			// e.printStackTrace();
+		}
+
+	}
+
+	public static MusicDetailsFragment newInstance(String albumId) {
+		MusicDetailsFragment f = new MusicDetailsFragment();
+		f.albumId = albumId;
+		Bundle b = new Bundle();
+		f.setArguments(b);
+		return f;
+	}
+
+	public static MusicDetailsFragment newInstance(String albumId, Bundle b) {
+		MusicDetailsFragment f = new MusicDetailsFragment();
+		f.albumId = albumId;
+		f.setArguments(b);
+		return f;
+	}
+
+	private String getMediaType() {
+		return JustCast.MUSIC_CONTENT_TYPE;
+	}
+
+	@Override
+	public Loader<List<MusicAlbum>> onCreateLoader(int arg0, Bundle arg1) {
+		return new MusicAlbumLoader(getActivity(), false);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<List<MusicAlbum>> arg0, List<MusicAlbum> data) {
+		musicDetailsAdapter.setData(data);
+		if (isResumed()) {
+			setListShown(true);
+		} else {
+			setListShownNoAnimation(true);
+		}
+
+	}
+
+	@Override
+	public void onLoaderReset(Loader<List<MusicAlbum>> arg0) {
+		musicDetailsAdapter.setData(null);
+	}
+
+}

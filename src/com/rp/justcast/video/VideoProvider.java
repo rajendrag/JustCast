@@ -46,31 +46,35 @@ public class VideoProvider {
 
 		String[] columns = { MediaStore.Video.Media._ID, MediaStore.Video.Media.DATA, MediaStore.Video.Media.TITLE, MediaStore.Video.Media.DURATION };
 		String orderBy = MediaStore.Images.Media.DATE_TAKEN + " desc";
-		Cursor videoCursor = JustCast.getmAppContext().getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, columns, null, null, orderBy);
-		videoCursor.moveToFirst();
-		long fileId = videoCursor.getLong(videoCursor.getColumnIndex(MediaStore.Video.Media._ID));
-		Log.w(TAG, "Building Media");
-		Log.w(TAG, "Video Count" + videoCursor.getCount());
-		int count = videoCursor.getCount();
-		Log.d(TAG, "Count of images" + count);
-		mediaList = new ArrayList<MediaInfo>();
-		for (int i = 0; i < count; i++) {
-			videoCursor.moveToPosition(i);
-			int dataColumnIndex = videoCursor.getColumnIndex(MediaStore.Video.Media.DATA);
-			int titleIndex = videoCursor.getColumnIndex(MediaStore.Video.Media.TITLE);
-			Log.w(TAG, "Video added" + videoCursor.getString(dataColumnIndex));
-			String path = videoCursor.getString(dataColumnIndex);
-			String title = videoCursor.getString(titleIndex);
-			MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
-			movieMetadata.putString("VIDEO_PATH", path);
-			movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, title);
-			movieMetadata.putString(MediaMetadata.KEY_TITLE, title);
-			movieMetadata.putString(MediaMetadata.KEY_STUDIO, title);
-			path = JustCast.addJustCastServerParam(path);
-			MediaInfo mediaInfo = new MediaInfo.Builder(path).setStreamType(MediaInfo.STREAM_TYPE_BUFFERED).setContentType(getMediaType()).setMetadata(movieMetadata).build();
-			mediaList.add(mediaInfo);
+		Cursor videoCursor = null;
+		try {
+			videoCursor = JustCast.getmAppContext().getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, columns, null, null, orderBy);
+			videoCursor.moveToFirst();
+			long fileId = videoCursor.getLong(videoCursor.getColumnIndex(MediaStore.Video.Media._ID));
+			Log.w(TAG, "Building Media");
+			Log.w(TAG, "Video Count" + videoCursor.getCount());
+			int count = videoCursor.getCount();
+			Log.d(TAG, "Count of images" + count);
+			mediaList = new ArrayList<MediaInfo>();
+			for (int i = 0; i < count; i++) {
+				videoCursor.moveToPosition(i);
+				int dataColumnIndex = videoCursor.getColumnIndex(MediaStore.Video.Media.DATA);
+				int titleIndex = videoCursor.getColumnIndex(MediaStore.Video.Media.TITLE);
+				Log.w(TAG, "Video added" + videoCursor.getString(dataColumnIndex));
+				String path = videoCursor.getString(dataColumnIndex);
+				String title = videoCursor.getString(titleIndex);
+				MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+				movieMetadata.putString("VIDEO_PATH", path);
+				movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, title);
+				movieMetadata.putString(MediaMetadata.KEY_TITLE, title);
+				movieMetadata.putString(MediaMetadata.KEY_STUDIO, title);
+				path = JustCast.addJustCastServerParam(path);
+				MediaInfo mediaInfo = new MediaInfo.Builder(path).setStreamType(MediaInfo.STREAM_TYPE_BUFFERED).setContentType(getMediaType()).setMetadata(movieMetadata).build();
+				mediaList.add(mediaInfo);
+			}
+		} finally {
+			videoCursor.close();
 		}
-		videoCursor.close();
 		return mediaList;
 	}
 
