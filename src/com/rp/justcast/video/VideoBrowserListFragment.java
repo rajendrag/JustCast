@@ -23,18 +23,41 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.google.android.gms.cast.MediaInfo;
+import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.utils.Utils;
+import com.google.sample.castcompanionlibrary.widgets.MiniController;
+import com.rp.justcast.JustCast;
 import com.rp.justcast.R;
 
 public class VideoBrowserListFragment extends ListFragment implements
         LoaderManager.LoaderCallbacks<List<MediaInfo>> {
 
     private VideoListAdapter mAdapter;
-
+    private MiniController mMini;
+    private VideoCastManager mCastManager;
+    
+    public VideoBrowserListFragment() {
+    	
+    }
+    
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	View v = super.onCreateView(inflater, container, savedInstanceState);
+    	mCastManager = JustCast.getCastManager(JustCast.getmAppContext());
+		// -- Adding MiniController
+		mMini = (MiniController) getActivity().findViewById(R.id.miniController1);
+		mCastManager.addMiniController(mMini);
+		mMini.setOnMiniControllerChangedListener(mCastManager);
+    	//container.addView(mMini);
+    	return v;
+    }
+    
     /*
      * (non-Javadoc)
      * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)

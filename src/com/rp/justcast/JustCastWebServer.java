@@ -21,7 +21,8 @@ public class JustCastWebServer extends AbstractWebServer {
 	/**
 	 * Common mime type for dynamic content: binary
 	 */
-	public static final String MIME_DEFAULT_BINARY = "application/octet-stream";
+	//public static final String MIME_DEFAULT_BINARY = "application/octet-stream";
+	public static final String MIME_DEFAULT_BINARY = "image/jpeg";
 
 	/**
 	 * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE

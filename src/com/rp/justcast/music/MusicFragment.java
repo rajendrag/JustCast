@@ -30,7 +30,7 @@ public class MusicFragment extends ListFragment  implements LoaderManager.Loader
 	@Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         MusicAlbum album = (MusicAlbum) musicAlbumsAdapter.getItem(position);
-		Fragment f = MusicDetailsFragment.newInstance(album.getAlbumId());
+		Fragment f = MusicDetailsFragment.newInstance(album);
 		FragmentTransaction mTx =  getFragmentManager().beginTransaction();
 		mTx.replace(R.id.content_frame, f).addToBackStack("Albums");
 		mTx.commit();

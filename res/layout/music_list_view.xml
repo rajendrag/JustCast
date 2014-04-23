@@ -5,7 +5,7 @@
     android:orientation="vertical">
  
     <ListView
-        android:id="@+id/music_list"
+        android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:divider="#b5b5b5"

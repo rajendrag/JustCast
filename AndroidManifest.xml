@@ -65,12 +65,12 @@
         <activity
             android:name="com.google.sample.castcompanionlibrary.cast.player.VideoCastControllerActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:parentActivityName="com.rp.justcast.video.VideoBrowserActivity"
+            android:launchMode="singleTask">
+           <!--  android:parentActivityName="com.rp.justcast.video.VideoBrowserActivity"
              >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.rp.justcast.video.VideoBrowserActivity" />
+                android:value="com.rp.justcast.video.VideoBrowserActivity" /> -->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

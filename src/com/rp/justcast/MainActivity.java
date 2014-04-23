@@ -21,11 +21,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.callbacks.IVideoCastConsumer;
 import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
+import com.google.sample.castcompanionlibrary.widgets.MiniController;
 import com.rp.justcast.music.MusicFragment;
 import com.rp.justcast.photos.ImageWorker;
 import com.rp.justcast.photos.PhotosFragment;
@@ -52,8 +52,9 @@ public class MainActivity extends ActionBarActivity {
 
 	private VideoCastManager mCastManager;
 	private IVideoCastConsumer mCastConsumer;
-	// private MiniController mMini;
+	private MiniController mMini;
 	private MenuItem mediaRouteMenuItem;
+	
 	private ImageWorker imageWorker;
 
 	@Override
@@ -67,10 +68,12 @@ public class MainActivity extends ActionBarActivity {
 		mCastManager = JustCast.getCastManager(this);
 		imageWorker = JustCast.initImageWorker(getSupportFragmentManager());
 		// -- Adding MiniController
+		
 		/*
 		 * mMini = (MiniController) findViewById(R.id.miniController1);
 		 * mCastManager.addMiniController(mMini);
 		 */
+		 
 
 		mCastConsumer = new VideoCastConsumerImpl() {
 
@@ -248,8 +251,10 @@ public class MainActivity extends ActionBarActivity {
 		}
 
 		if (null != mCastManager) {
-			// mMini.removeOnMiniControllerChangedListener(mCastManager);
-			// mCastManager.removeMiniController(mMini);
+			if(null != mMini) {
+				mMini.removeOnMiniControllerChangedListener(mCastManager);
+			}
+			mCastManager.removeMiniController(mMini);
 			mCastManager.clearContext(this);
 		}
 		imageWorker.closeCache();
@@ -286,6 +291,10 @@ public class MainActivity extends ActionBarActivity {
 			tx.commit();
 			break;
 		case 1:
+			/*Fragment vf = new VideoLayoutFragment();
+			FragmentTransaction vtx = getSupportFragmentManager().beginTransaction();
+			vtx.replace(R.id.content_frame, vf);
+			vtx.commit();*/
 			ListFragment lf = VideoBrowserListFragment.newInstance();
 			FragmentTransaction vTx = getSupportFragmentManager().beginTransaction();
 			vTx. replace(R.id.content_frame, lf);
@@ -305,55 +314,12 @@ public class MainActivity extends ActionBarActivity {
 		mDrawerLayout.closeDrawer(mDrawerList);
 	}
 
-	/**
-	 * Send a text message to the receiver
-	 * 
-	 * @param message
-	 */
-	private void sendMessage(String message) {
-		/*
-		 * if (mSelectedDevice == null) { Log.d(TAG,
-		 * "No Device selected to cast"); Toast.makeText(this,
-		 * "No Device selected to cast, Please select a device using Cast button on top"
-		 * , Toast.LENGTH_LONG).show(); return; } if (mApiClient == null ||
-		 * mRemoteMediaPlayer == null) { Log.w(TAG,
-		 * "No API or No remote player"); return; }
-		 */
-		/*
-		 * try { message = URLEncoder.encode(message, "UTF-8"); } catch
-		 * (UnsupportedEncodingException e1) { // TODO Auto-generated catch
-		 * block e1.printStackTrace(); }
-		 */
-		/*
-		 * MediaMetadata mediaMetadata = new
-		 * MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);
-		 * mediaMetadata.putString(MediaMetadata.KEY_TITLE, "My picture");
-		 * String url = "http://" + myHost + ":" + myPort + "?path=" + message;
-		 * Log.d(TAG, "Content URL sending to chromecast" + url); MediaInfo
-		 * mediaInfo = new
-		 * MediaInfo.Builder(url).setContentType("image/png").setStreamType
-		 * (MediaInfo.STREAM_TYPE_BUFFERED).setMetadata(mediaMetadata).build();
-		 * try { mRemoteMediaPlayer.load(mApiClient, mediaInfo,
-		 * true).setResultCallback(new
-		 * ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
-		 * 
-		 * @Override public void onResult(MediaChannelResult result) { if
-		 * (result.getStatus().isSuccess()) { Log.d(TAG,
-		 * "Media loaded successfully"); } else { Log.w(TAG,
-		 * "Message sending failed" + result.getStatus().toString()); } } }); }
-		 * catch (IllegalStateException e) { Log.e(TAG,
-		 * "Problem occurred with media during loading", e); } catch (Exception
-		 * e) { Log.e(TAG, "Problem opening media during loading", e); }
-		 */
-
-	}
-
 	public class DrawerItemClickListener implements OnItemClickListener {
 
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			selectItem(position);
-			Toast.makeText(view.getContext(), "" + position, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(view.getContext(), "" + position, Toast.LENGTH_SHORT).show();
 		}
 
 	}

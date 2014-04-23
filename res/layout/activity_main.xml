@@ -3,27 +3,27 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
-    <!-- The main content view -->
-
-    <FrameLayout
+    
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" >
+	    <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <!--
-         <GridView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/gridview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:columnWidth="100dp"
-        android:gravity="center"
-        android:horizontalSpacing="10dp"
-        android:numColumns="auto_fit"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="10dp" />
-    -->
-    <!-- The navigation drawer -->
+        android:layout_height="match_parent" 
+        android:layout_above="@+id/miniController1" />
+	
+	    <com.google.sample.castcompanionlibrary.widgets.MiniController
+	        android:id="@+id/miniController1"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentBottom="true"
+	        android:background="@drawable/shadow7"
+	        android:visibility="gone" >
+	    </com.google.sample.castcompanionlibrary.widgets.MiniController>
+	
+	</RelativeLayout>
+    <!-- The main content view -->
 
     <ListView
         android:id="@+id/left_drawer"
