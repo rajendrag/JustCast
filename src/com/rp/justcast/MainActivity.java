@@ -1,7 +1,11 @@
 package com.rp.justcast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -49,12 +53,15 @@ public class MainActivity extends ActionBarActivity {
 	private CharSequence mTitle;
 	private String[] mMenuTitles;
 	private ListView mDrawerList;
+	private TypedArray menuIcons;
+	private List<com.rp.justcast.JustCastMenuItem> menuItems;
+	private MenuAdapter menuAdapter;
 
 	private VideoCastManager mCastManager;
 	private IVideoCastConsumer mCastConsumer;
 	private MiniController mMini;
 	private MenuItem mediaRouteMenuItem;
-	
+
 	private ImageWorker imageWorker;
 
 	@Override
@@ -68,12 +75,11 @@ public class MainActivity extends ActionBarActivity {
 		mCastManager = JustCast.getCastManager(this);
 		imageWorker = JustCast.initImageWorker(getSupportFragmentManager());
 		// -- Adding MiniController
-		
+
 		/*
 		 * mMini = (MiniController) findViewById(R.id.miniController1);
 		 * mCastManager.addMiniController(mMini);
 		 */
-		 
 
 		mCastConsumer = new VideoCastConsumerImpl() {
 
@@ -120,12 +126,26 @@ public class MainActivity extends ActionBarActivity {
 
 		mTitle = mDrawerTitle = getTitle();
 		mMenuTitles = getResources().getStringArray(R.array.left_side_menu);
+		menuIcons = getResources().obtainTypedArray(R.array.menu_icons);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
+		menuItems = new ArrayList<JustCastMenuItem>();
+
+		for (int i = 0; i < mMenuTitles.length; i++) {
+			JustCastMenuItem items = new JustCastMenuItem(mMenuTitles[i], menuIcons.getResourceId(i, -1));
+			menuItems.add(items);
+		}
+
+		menuIcons.recycle();
+
+		menuAdapter = new MenuAdapter(getApplicationContext(), menuItems);
+
+		mDrawerList.setAdapter(menuAdapter);
+
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
 		// Set the adapter for the list view
-		mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mMenuTitles));
 		// Set the list's click listener
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 		getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -251,7 +271,7 @@ public class MainActivity extends ActionBarActivity {
 		}
 
 		if (null != mCastManager) {
-			if(null != mMini) {
+			if (null != mMini) {
 				mMini.removeOnMiniControllerChangedListener(mCastManager);
 			}
 			mCastManager.removeMiniController(mMini);
@@ -291,19 +311,20 @@ public class MainActivity extends ActionBarActivity {
 			tx.commit();
 			break;
 		case 1:
-			/*Fragment vf = new VideoLayoutFragment();
-			FragmentTransaction vtx = getSupportFragmentManager().beginTransaction();
-			vtx.replace(R.id.content_frame, vf);
-			vtx.commit();*/
+			/*
+			 * Fragment vf = new VideoLayoutFragment(); FragmentTransaction vtx
+			 * = getSupportFragmentManager().beginTransaction();
+			 * vtx.replace(R.id.content_frame, vf); vtx.commit();
+			 */
 			ListFragment lf = VideoBrowserListFragment.newInstance();
 			FragmentTransaction vTx = getSupportFragmentManager().beginTransaction();
-			vTx. replace(R.id.content_frame, lf);
+			vTx.replace(R.id.content_frame, lf);
 			vTx.commit();
 			break;
 		case 2:
 			Fragment mf = new MusicFragment();
 			FragmentTransaction mTx = getSupportFragmentManager().beginTransaction();
-			mTx. replace(R.id.content_frame, mf);
+			mTx.replace(R.id.content_frame, mf);
 			mTx.commit();
 			break;
 		default:
@@ -319,7 +340,8 @@ public class MainActivity extends ActionBarActivity {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			selectItem(position);
-			//Toast.makeText(view.getContext(), "" + position, Toast.LENGTH_SHORT).show();
+			// Toast.makeText(view.getContext(), "" + position,
+			// Toast.LENGTH_SHORT).show();
 		}
 
 	}

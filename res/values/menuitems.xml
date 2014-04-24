@@ -5,4 +5,10 @@
         <item>Videos</item>
         <item>Music</item>
     </string-array>
+    
+    <array name="menu_icons">
+        <item>@drawable/rsz_jc_photos</item>
+        <item>@drawable/rsz_jc_videos</item>
+        <item>@drawable/rsz_jc_music</item>
+    </array>
 </resources>
