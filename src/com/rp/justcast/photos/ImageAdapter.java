@@ -49,14 +49,15 @@ public class ImageAdapter extends BaseAdapter {
 			String orderBy = MediaStore.Images.Media.DATE_TAKEN+ " desc" ;
 			imageCursor = mContext.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, null, null, orderBy);
 			//int imageColumnIndex = imagecursor.getColumnIndex(MediaStore.Images.Media.DATA);
-
-			int count = imageCursor.getCount();
-			Log.d(TAG, "Count of images" + count);
-			for (int i = 0; i < count; i++) {
-				imageCursor.moveToPosition(i);
-				int dataColumnIndex = imageCursor.getColumnIndex(MediaStore.Images.Media.DATA);
-				itemList.add(imageCursor.getString(dataColumnIndex));
-				Log.d(TAG, "Image added" + itemList.get(i));
+			if (null != imageCursor) {
+				int count = imageCursor.getCount();
+				Log.d(TAG, "Count of images" + count);
+				for (int i = 0; i < count; i++) {
+					imageCursor.moveToPosition(i);
+					int dataColumnIndex = imageCursor.getColumnIndex(MediaStore.Images.Media.DATA);
+					itemList.add(imageCursor.getString(dataColumnIndex));
+					Log.d(TAG, "Image added" + itemList.get(i));
+				}
 			}
 		} finally {
 			if (null != imageCursor) {

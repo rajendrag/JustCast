@@ -45,20 +45,12 @@ import java.util.TimeZone;
 import android.util.Log;
 
 /**
- * This is a fork of NanoHttpd
- * 
+ * A fork of NanoHttpd, but changed lot of stuff customize to JustCast needs and to improve the streaming performance.
  */
 public abstract class AbstractWebServer {
+	
 	private static final String TAG = "JustCastWebServer";
-	/**
-	 * Maximum time to wait on Socket.getInputStream().read() (in milliseconds)
-	 * This is required as the Keep-Alive HTTP connections would otherwise block
-	 * the socket reading thread forever (or as long the browser is open).
-	 */
-	public static final int SOCKET_READ_TIMEOUT = 5000;
-	/**
-	 * Common mime type for dynamic content: plain text
-	 */
+	
 	public static final String MIME_PLAINTEXT = "text/plain";
 	/**
 	 * Common mime type for dynamic content: html
@@ -74,21 +66,11 @@ public abstract class AbstractWebServer {
 	private ServerSocket myServerSocket;
 	private Set<Socket> openConnections = new HashSet<Socket>();
 	private Thread myThread;
-	/**
-	 * Pluggable strategy for asynchronously executing requests.
-	 */
+	
 	private AsyncRunner asyncRunner;
-	/**
-	 * Pluggable strategy for creating and cleaning up temporary files.
-	 */
+	
 	private TempFileManagerFactory tempFileManagerFactory;
 
-	/**
-	 * Constructs an HTTP server on given port.
-	 */
-	public AbstractWebServer(int port) {
-		this(null, port);
-	}
 
 	/**
 	 * Constructs an HTTP server on given hostname and port.
@@ -100,7 +82,7 @@ public abstract class AbstractWebServer {
 		System.setProperty("http.keepAlive", "false");
 		setAsyncRunner(new DefaultAsyncRunner());
 	}
-
+	
 	private static final void safeClose(Closeable closeable) {
 		if (closeable != null) {
 			try {
@@ -145,6 +127,7 @@ public abstract class AbstractWebServer {
 			public void run() {
 				do {
 					try {
+						System.setProperty("http.keepAlive", "false");
 						final Socket finalAccept = myServerSocket.accept();
 						registerConnection(finalAccept);
 						//finalAccept.setSoTimeout(SOCKET_READ_TIMEOUT);
@@ -159,6 +142,7 @@ public abstract class AbstractWebServer {
 									HTTPSession session = new HTTPSession(tempFileManager, inputStream, outputStream, finalAccept.getInetAddress());
 									while (!finalAccept.isClosed()) {
 										session.execute();
+										safeClose(finalAccept);
 									}
 								} catch (Exception e) {
 									// When the socket is closed by the client,
@@ -245,50 +229,11 @@ public abstract class AbstractWebServer {
 	 * <p/>
 	 * (By default, this delegates to serveFile() and allows directory listing.)
 	 * 
-	 * @param uri
-	 *            Percent-decoded URI without parameters, for example
-	 *            "/index.cgi"
-	 * @param method
-	 *            "GET", "POST" etc.
-	 * @param parms
-	 *            Parsed, percent decoded parameters from URI and, in case of
-	 *            POST, data.
-	 * @param headers
-	 *            Header entries, percent decoded
-	 * @return HTTP response, see class Response for details
-	 */
-	@Deprecated
-	public Response serve(String uri, Method method, Map<String, String> headers, Map<String, String> parms, Map<String, String> files) {
-		return new Response(Response.Status.NOT_FOUND, MIME_PLAINTEXT, "Not Found");
-	}
-
-	/**
-	 * Override this to customize the server.
-	 * <p/>
-	 * <p/>
-	 * (By default, this delegates to serveFile() and allows directory listing.)
-	 * 
 	 * @param session
 	 *            The HTTP session
 	 * @return HTTP response, see class Response for details
 	 */
-	public Response serve(IHTTPSession session) {
-		Map<String, String> files = new HashMap<String, String>();
-		Method method = session.getMethod();
-		if (Method.PUT.equals(method) || Method.POST.equals(method)) {
-			try {
-				session.parseBody(files);
-			} catch (IOException ioe) {
-				return new Response(Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
-			} catch (ResponseException re) {
-				return new Response(re.getStatus(), MIME_PLAINTEXT, re.getMessage());
-			}
-		}
-
-		Map<String, String> parms = session.getParms();
-		parms.put(QUERY_STRING_PARAMETER, session.getQueryParameterString());
-		return serve(session.getUri(), method, session.getHeaders(), parms, files);
-	}
+	public abstract Response serve(IHTTPSession session);
 
 	/**
 	 * Decode percent encoded <code>String</code> values.
@@ -352,13 +297,6 @@ public abstract class AbstractWebServer {
 		return parms;
 	}
 
-	// -------------------------------------------------------------------------------
-	// //
-	//
-	// Threading Strategy.
-	//
-	// -------------------------------------------------------------------------------
-	// //
 
 	/**
 	 * Pluggable strategy for asynchronously executing requests.
@@ -369,14 +307,6 @@ public abstract class AbstractWebServer {
 	public void setAsyncRunner(AsyncRunner asyncRunner) {
 		this.asyncRunner = asyncRunner;
 	}
-
-	// -------------------------------------------------------------------------------
-	// //
-	//
-	// Temp file handling strategy.
-	//
-	// -------------------------------------------------------------------------------
-	// //
 
 	/**
 	 * Pluggable strategy for creating and cleaning up temporary files.
@@ -654,7 +584,7 @@ public abstract class AbstractWebServer {
 					sendAsFixedLength(outputStream, pw);
 				}
 
-				// outputStream.flush();
+				 outputStream.flush();
 				safeClose(data);
 			} catch (Throwable ioe) {
 				Log.e(TAG, "Error while writing response", ioe);
@@ -676,15 +606,11 @@ public abstract class AbstractWebServer {
 				outputStream.write(CRLF);
 			}
 			outputStream.write(String.format("0\r\n\r\n").getBytes());
-			outputStream.flush();
+			//outputStream.flush();
 		}
 
 		private void sendAsFixedLength(OutputStream outputStream, PrintWriter pw) throws IOException {
-			int pending = data != null ? data.available() : 0; // This is to
-																// support
-																// partial
-																// sends, see
-																// serveFile()
+			int pending = data != null ? data.available() : 0; // This is to support partial sends, see serveFile()
 			Log.d(TAG, "Sending pending data " + pending);
 			pw.print("Content-Length: " + pending + "\r\n");
 
