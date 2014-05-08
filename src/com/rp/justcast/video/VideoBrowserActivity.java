@@ -124,12 +124,12 @@ public class VideoBrowserActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        /*switch (item.getItemId()) {
             case R.id.action_settings:
                 Intent i = new Intent(VideoBrowserActivity.this, CastPreference.class);
                 startActivity(i);
                 break;
-        }
+        }*/
         return true;
     }
 

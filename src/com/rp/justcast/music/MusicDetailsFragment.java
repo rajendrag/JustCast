@@ -11,6 +11,7 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
@@ -86,6 +87,14 @@ public class MusicDetailsFragment extends ListFragment implements LoaderManager.
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		MusicAlbum selectedMedia = musicDetailsAdapter.getItem(position);
+		if(JustCast.isSlideShowInProgress()) {
+        	Toast t = Toast.makeText(getActivity(), "Slideshow ended", Toast.LENGTH_SHORT);
+        	t.show();
+        	//JustCast.setSlideShowInProgress(false);
+        	if(JustCast.isSlideShowEnabled()) {
+        		JustCast.toggleSlideShow();
+        	}
+        }
 		handleNavigation(selectedMedia, false);
 	}
 

@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.cast.MediaInfo;
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
@@ -101,6 +102,14 @@ public class VideoBrowserListFragment extends ListFragment implements
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         MediaInfo selectedMedia = mAdapter.getItem(position);
+        if(JustCast.isSlideShowInProgress()) {
+        	Toast t = Toast.makeText(getActivity(), "Slideshow ended", Toast.LENGTH_SHORT);
+        	t.show();
+        	JustCast.setSlideShowInProgress(true);
+        	if(JustCast.isSlideShowEnabled()) {
+        		JustCast.toggleSlideShow();
+        	}
+        }
         handleNavigation(selectedMedia, false);
     }
 

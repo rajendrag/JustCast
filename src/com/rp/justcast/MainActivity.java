@@ -59,7 +59,7 @@ public class MainActivity extends ActionBarActivity {
 
 	private VideoCastManager mCastManager;
 	private IVideoCastConsumer mCastConsumer;
-	private MiniController mMini;
+	//private MiniController mMini;
 	private MenuItem mediaRouteMenuItem;
 
 	private ImageWorker imageWorker;
@@ -271,10 +271,10 @@ public class MainActivity extends ActionBarActivity {
 		}
 
 		if (null != mCastManager) {
-			if (null != mMini) {
+			/*if (null != mMini) {
 				mMini.removeOnMiniControllerChangedListener(mCastManager);
 			}
-			mCastManager.removeMiniController(mMini);
+			mCastManager.removeMiniController(mMini);*/
 			mCastManager.clearContext(this);
 		}
 		imageWorker.closeCache();
@@ -283,17 +283,6 @@ public class MainActivity extends ActionBarActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		/*
-		 * super.onCreateOptionsMenu(menu);
-		 * getMenuInflater().inflate(R.menu.main, menu); MenuItem
-		 * mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
-		 * MediaRouteActionProvider mediaRouteActionProvider =
-		 * (MediaRouteActionProvider)
-		 * MenuItemCompat.getActionProvider(mediaRouteMenuItem); // Set the
-		 * MediaRouteActionProvider selector for device discovery.
-		 * mediaRouteActionProvider.setRouteSelector(mMediaRouteSelector);
-		 */
-
 		super.onCreateOptionsMenu(menu);
 		getMenuInflater().inflate(R.menu.main, menu);
 

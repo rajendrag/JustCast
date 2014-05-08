@@ -10,6 +10,7 @@ import org.apache.http.conn.util.InetAddressUtils;
 import android.app.Application;
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
+import android.widget.Toast;
 
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.utils.Utils;
@@ -36,6 +37,8 @@ public class JustCast extends Application {
 	public static final String KEY_AUDIO_PATH_URL	= "AUDIO_PATH_URL";
 	public static final String KEY_VIDEO_PATH_URL	= "VIDEO_PATH_URL";
 
+	private static boolean slideShow = false;
+	private static boolean slideShowInProgress = false;
     /*
      * (non-Javadoc)
      * @see android.app.Application#onCreate()
@@ -141,7 +144,40 @@ public class JustCast extends Application {
 		return "http://"+myHost+":"+myPort+"/";
 	}
 	
-	public static final String addJustCastServerParam(String path) {
+	public static String addJustCastServerParam(String path) {
 		return getJustCastServerUrl()+"?path="+path;
 	}
+	
+	public static  boolean isSlideShowEnabled() {
+		return slideShow;
+	}
+	
+	public static void toggleSlideShow() {
+		if(slideShow) {
+			slideShowInProgress = false;
+		}
+		slideShow = !slideShow;
+	}
+	
+	public static boolean isSlideShowInProgress() {
+		return slideShowInProgress;
+	}
+	
+	public static void setSlideShowInProgress(boolean slideShowInProgress) {
+		JustCast.slideShowInProgress = slideShowInProgress;
+	}
+
+	public static void updateSlideShow(boolean enable) {
+		if(enable) {
+			slideShow = true;
+			slideShowInProgress = true;
+		} else {
+			Toast t = Toast.makeText(mAppContext, "Slideshow ended", Toast.LENGTH_SHORT);
+        	t.show();
+        	slideShow = false;
+        	slideShowInProgress = false;
+		}
+	}
+	
+	
 }

@@ -16,7 +16,8 @@ public class JustCastService extends Service {
 
 	private static final String TAG = JustCastService.class.getName();
 	private AbstractWebServer webServer;
-
+	//private JustCastNewWebServer webServer;
+	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		if (webServer == null) {
@@ -31,22 +32,16 @@ public class JustCastService extends Service {
 		            rootDirs.add(new File(".").getAbsoluteFile());
 		        }
 			webServer = new JustCastWebServer(myHost, myPort, rootDirs, quiet);
+			//webServer = new JustCastNewWebServer(JustCast.getmAppContext(), myHost, myPort);
 			try {
 				webServer.start();
+				//webServer.startThread();
 				Log.d(TAG, "Web server started");
-			} catch (IOException ioe) {
+			} catch (Exception ioe) {
 				ioe.printStackTrace();
 				Log.e(TAG, "The server could not start.", ioe);
 			}
 		}
-		
-		
-       
-
-		
-		
-		
-		
 		
 		return Service.START_NOT_STICKY;
 	}
@@ -60,6 +55,7 @@ public class JustCastService extends Service {
 	@Override
 	public boolean stopService(Intent intent) {
 		webServer.stop();
+		//webServer.stopThread();
 		return super.stopService(intent);
 	}
 }

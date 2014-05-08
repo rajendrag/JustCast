@@ -5,6 +5,7 @@
     <string name="app_id">ABB80A79</string>
     <string name="namespace">urn:x-cast:com.google.cast.media</string>
     <string name="action_settings">Settings</string>
+    <string name="slideshow">Slideshow</string>
     <string name="message_to_cast">Message to Cast</string>
     <string name="media_route_menu_title">Play on</string>
     <string name="about_app">JustCast</string>
@@ -22,6 +23,8 @@
     <string name="prefs_volume_dialog_title">Volume Assignment</string>
     <string name="prefs_volume_default">device</string>
     <string name="title_activity_test">TestActivity</string>
+    
+    <string name="select_start_image">Select an image to start slide show from</string>
     
     <string name="connection_temp_lost">Connection to the cast device is temporarily lost</string>
     <string name="connection_recovered">Connection to the cast device is recovered</string>
