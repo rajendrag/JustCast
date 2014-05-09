@@ -55,6 +55,7 @@ public class JustCastWebServer extends AbstractWebServer {
 			put("zip", "application/octet-stream");
 			put("exe", "application/octet-stream");
 			put("class", "application/octet-stream");
+			put("vob", "video/mpeg");
 		}
 	};
 
@@ -216,8 +217,8 @@ public class JustCastWebServer extends AbstractWebServer {
 					};
 					fis.skip(startFrom);
 					Log.d(TAG, "Chunked Response Starts["+startFrom+"] ends ["+endAt+"]");
-					//res = createResponse(Response.Status.PARTIAL_CONTENT, mime, fis);
-					res = createResponse(Response.Status.OK, mime, fis);
+					res = createResponse(Response.Status.PARTIAL_CONTENT, mime, fis);
+					//res = createResponse(Response.Status.OK, mime, fis);
 					//res.setChunkedTransfer(true);
 					res.addHeader("Connection", "close");
 					res.addHeader("Content-Length", "" + dataLen);
