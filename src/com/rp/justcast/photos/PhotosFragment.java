@@ -124,7 +124,7 @@ public class PhotosFragment extends Fragment implements AdapterView.OnItemClickL
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		// inflater.inflate(R.menu.main_menu, menu);
-		MenuItem item = menu.add(Menu.NONE, R.id.action_slideshow, 10, R.string.slideshow);
+		MenuItem item = menu.add(Menu.NONE, 111, 10, R.string.slideshow);
 		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		if(JustCast.isSlideShowEnabled()) {
 			item.setIcon(R.drawable.ic_av_pause_light);
@@ -136,7 +136,7 @@ public class PhotosFragment extends Fragment implements AdapterView.OnItemClickL
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.action_slideshow:
+			case 111:
 				JustCast.toggleSlideShow();
 				if(JustCast.isSlideShowEnabled()) {
 					if(!JustCast.getCastManager(getActivity()).isConnected()) {

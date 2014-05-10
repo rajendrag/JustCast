@@ -219,7 +219,7 @@ public class JustCastWebServer extends AbstractWebServer {
 					Log.d(TAG, "Chunked Response Starts["+startFrom+"] ends ["+endAt+"]");
 					res = createResponse(Response.Status.PARTIAL_CONTENT, mime, fis);
 					//res = createResponse(Response.Status.OK, mime, fis);
-					//res.setChunkedTransfer(true);
+					res.setChunkedTransfer(true);
 					res.addHeader("Connection", "close");
 					res.addHeader("Content-Length", "" + dataLen);
 					res.addHeader("Content-Range", "bytes " + startFrom + "-" + endAt + "/" + fileLen);
