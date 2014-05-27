@@ -13,7 +13,9 @@
     <string name="justcast_servicename">JustCast Serice</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    
+    <string name="all_photos">All Pictures</string>
+    <string name="show_albums">Show Folders</string>
+    <string name="slideshow_interval">Slideshow Interval</string>
     <string name="prefs_header_application">Application Behavior</string>
     <string name="prefs_header_application_summary">Control how the application behaves on the TV</string>
     <string name="prefs_termination_policy_default">0</string>

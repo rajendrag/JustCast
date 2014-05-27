@@ -23,16 +23,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.callbacks.IVideoCastConsumer;
 import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
-import com.google.sample.castcompanionlibrary.widgets.MiniController;
 import com.rp.justcast.music.MusicFragment;
+import com.rp.justcast.photos.GalleryTabFragment;
 import com.rp.justcast.photos.ImageWorker;
-import com.rp.justcast.photos.PhotosFragment;
 import com.rp.justcast.settings.CastPreference;
 import com.rp.justcast.video.VideoBrowserListFragment;
 
@@ -69,7 +67,7 @@ public class MainActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		VideoCastManager.checkGooglePlaySevices(this);
+		VideoCastManager.checkGooglePlayServices(this);
 		ActionBar actionBar = getSupportActionBar();
 
 		mCastManager = JustCast.getCastManager(this);
@@ -85,7 +83,7 @@ public class MainActivity extends ActionBarActivity {
 
 			@Override
 			public void onFailed(int resourceId, int statusCode) {
-
+				JustCastUtils.showToast(MainActivity.this, "Connection failed");
 			}
 
 			@Override
@@ -294,9 +292,13 @@ public class MainActivity extends ActionBarActivity {
 		mDrawerList.setItemChecked(position, true);
 		switch (position) {
 		case 0:
-			Fragment fg = new PhotosFragment();
+			/*Fragment fg = new PhotosFragment();
 			FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
 			tx.replace(R.id.content_frame, fg);
+			tx.commit();*/
+			Fragment fg = new GalleryTabFragment();
+			FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+			tx.replace(R.id.content_frame, fg, "GalleryTabFragment");
 			tx.commit();
 			break;
 		case 1:
