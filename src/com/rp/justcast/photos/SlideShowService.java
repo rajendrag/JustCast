@@ -13,10 +13,13 @@ import com.rp.justcast.R;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class SlideShowService extends IntentService {
+	private static final String SLIDE_SHOW_INTERVAL = "com.rp.justcast.ssInterval";
 	
 	VideoCastManager castManager;
 	
@@ -28,6 +31,7 @@ public class SlideShowService extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		List<String> photos =  (List<String>) intent.getExtras().get("photosList");
 		int selectedPosition = intent.getIntExtra("selectedPosition", 0);
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		if(null != photos && selectedPosition < photos.size() ) {
 			if(castManager == null) {
 				castManager = JustCast.getCastManager(this);
@@ -46,7 +50,8 @@ public class SlideShowService extends IntentService {
 					break;
 				}
 				loadMedia(photos.get(i));
-				SystemClock.sleep(6000);
+				int currentInterval = preferences.getInt(SLIDE_SHOW_INTERVAL, 6);
+				SystemClock.sleep(currentInterval*1000);
 			}
 		}
 	}

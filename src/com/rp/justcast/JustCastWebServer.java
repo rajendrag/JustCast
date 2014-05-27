@@ -14,10 +14,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import android.content.Context;
 import android.util.Log;
 
 public class JustCastWebServer extends AbstractWebServer {
 	private static final String TAG = "JustCastWebServer";
+	
+	private Context mContext;
+	
 	/**
 	 * Common mime type for dynamic content: binary
 	 */
@@ -59,21 +63,15 @@ public class JustCastWebServer extends AbstractWebServer {
 		}
 	};
 
-	private final List<File> rootDirs;
-	private final boolean quiet;
-
-	public JustCastWebServer(String host, int port, File wwwroot, boolean quiet) {
+	public JustCastWebServer(String host, int port, Context context) {
 		super(host, port);
-		this.quiet = quiet;
-		this.rootDirs = new ArrayList<File>();
-		this.rootDirs.add(wwwroot);
+		mContext = context;
 	}
 
-	public JustCastWebServer(String host, int port, List<File> wwwroots, boolean quiet) {
+	/*public JustCastWebServer(String host, int port) {
 		super(host, port);
-		this.quiet = quiet;
-		this.rootDirs = new ArrayList<File>(wwwroots);
-	}
+		
+	}*/
 
 	/**
 	 * URL-encodes everything between "/"-characters. Encodes spaces as '%20'
@@ -103,7 +101,7 @@ public class JustCastWebServer extends AbstractWebServer {
 		Map<String, String> parms = session.getParms();
 		String uri = session.getUri();
 
-		if (!quiet) {
+		/*if (!quiet) {
 			System.out.println(session.getMethod() + " '" + uri + "' ");
 
 			Iterator<String> e = header.keySet().iterator();
@@ -116,7 +114,7 @@ public class JustCastWebServer extends AbstractWebServer {
 				String value = e.next();
 				System.out.println("  PRM: '" + value + "' = '" + parms.get(value) + "'");
 			}
-		}
+		}*/
 
 		return respond(Collections.unmodifiableMap(header), uri, parms);
 	}
@@ -172,7 +170,6 @@ public class JustCastWebServer extends AbstractWebServer {
 		try {
 			// Calculate etag
 			String etag = Integer.toHexString((file.getAbsolutePath() + file.lastModified() + "" + file.length()).hashCode());
-
 			// Support (simple) skipping:
 			long startFrom = 0;
 			long endAt = -1;

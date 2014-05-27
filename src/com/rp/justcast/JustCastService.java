@@ -24,14 +24,7 @@ public class JustCastService extends Service {
 			String myHost = JustCast.getMyHost();
 			int myPort = JustCast.getMyPort();
 			//webServer = new JustCastWebServer(myHost, myPort);
-			 List<File> rootDirs = new ArrayList<File>();
-		        boolean quiet = true;
-		        Map<String, String> options = new HashMap<String, String>();
-
-		        if (rootDirs.isEmpty()) {
-		            rootDirs.add(new File(".").getAbsoluteFile());
-		        }
-			webServer = new JustCastWebServer(myHost, myPort, rootDirs, quiet);
+			webServer = new JustCastWebServer(myHost, myPort, this);
 			//webServer = new JustCastNewWebServer(JustCast.getmAppContext(), myHost, myPort);
 			try {
 				webServer.start();

@@ -1,11 +1,13 @@
 package com.rp.justcast.photos;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.InputFilter.LengthFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
@@ -39,11 +40,33 @@ public class PhotosFragment extends Fragment implements AdapterView.OnItemClickL
 	public PhotosFragment() {
 	}
 
+	public static final PhotosFragment newInstance(String albumName, ArrayList<String> images) {
+		PhotosFragment fragment = new PhotosFragment();
+	    Bundle bundle = new Bundle(2);
+	    bundle.putString("albumName", albumName);
+	    bundle.putStringArrayList("images", images);
+	    fragment.setArguments(bundle);
+	    return fragment ;
+	}
+	
+	/*public PhotosFragment(String albumName, List<String> images) {
+		if (images == null) {
+			mAdapter = new ImageAdapter(getActivity(), albumName);
+		} else {
+			mAdapter = new ImageAdapter(getActivity(), images);
+		}
+	}*/
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
-		mAdapter = new ImageAdapter(getActivity());
+		String albumName = getArguments().getString("albumName");
+		ArrayList<String> imagesInAlbum = getArguments().getStringArrayList("images");
+		if (imagesInAlbum == null) {
+			mAdapter = new ImageAdapter(getActivity(), albumName);
+		} else {
+			mAdapter = new ImageAdapter(getActivity(), imagesInAlbum);
+		}
 	}
 
 	@Override
@@ -121,41 +144,8 @@ public class PhotosFragment extends Fragment implements AdapterView.OnItemClickL
 		}
 	}
 
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// inflater.inflate(R.menu.main_menu, menu);
-		MenuItem item = menu.add(Menu.NONE, 111, 10, R.string.slideshow);
-		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		if(JustCast.isSlideShowEnabled()) {
-			item.setIcon(R.drawable.ic_av_pause_light);
-		} else {
-			item.setIcon(R.drawable.ic_av_play_light);
-		}
+	
+	public List<String> getImagesFromAdapter() {
+		return mAdapter.itemList;
 	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case 111:
-				JustCast.toggleSlideShow();
-				if(JustCast.isSlideShowEnabled()) {
-					if(!JustCast.getCastManager(getActivity()).isConnected()) {
-						Toast.makeText(getActivity(), R.string.no_device_to_cast, Toast.LENGTH_LONG).show();
-						JustCast.updateSlideShow(false);
-						item.setIcon(R.drawable.ic_av_play_light);
-					} else {
-						item.setIcon(R.drawable.ic_av_pause_light);
-						Toast.makeText(getActivity(), R.string.select_start_image, Toast.LENGTH_LONG).show();
-					}
-				} else {
-					if(JustCast.isSlideShowInProgress()) {
-						JustCast.updateSlideShow(false);
-					}
-					item.setIcon(R.drawable.ic_av_play_light);
-				}
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
 }
