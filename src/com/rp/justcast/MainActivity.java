@@ -68,7 +68,7 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 
 		VideoCastManager.checkGooglePlayServices(this);
-		ActionBar actionBar = getSupportActionBar();
+		final ActionBar actionBar = getSupportActionBar();
 
 		mCastManager = JustCast.getCastManager(this);
 		imageWorker = JustCast.initImageWorker(getSupportFragmentManager());
@@ -118,7 +118,7 @@ public class MainActivity extends ActionBarActivity {
 		};
 
 		setupActionBar(actionBar);
-		mCastManager.reconnectSessionIfPossible(this, false);
+		mCastManager.reconnectSessionIfPossible();
 
 		// getSupportActionBar();
 
@@ -146,20 +146,20 @@ public class MainActivity extends ActionBarActivity {
 		// Set the adapter for the list view
 		// Set the list's click listener
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
 
 			public void onDrawerClosed(View view) {
 				super.onDrawerClosed(view);
-				getActionBar().setTitle(mTitle);
+				actionBar.setTitle(mTitle);
 				invalidateOptionsMenu();
 			}
 
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-				getActionBar().setTitle(mDrawerTitle);
+				actionBar.setTitle(mDrawerTitle);
 				invalidateOptionsMenu();
 			}
 		};
@@ -190,9 +190,9 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 	private void setupActionBar(ActionBar actionBar) {
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		getSupportActionBar().setIcon(R.drawable.ic_launcher);
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		//actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		actionBar.setIcon(R.drawable.ic_launcher);
+		actionBar.setDisplayShowTitleEnabled(false);
 	}
 
 	@Override

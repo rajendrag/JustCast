@@ -51,26 +51,34 @@ public class JustCast extends Application {
         setMyPort(8111);
         setmAppContext(getApplicationContext());
         APPLICATION_ID = getString(R.string.app_id);
+        initCastManager(getApplicationContext());
         Utils.saveFloatToPreference(getApplicationContext(),
                 VideoCastManager.PREFS_KEY_VOLUME_INCREMENT, (float) VOLUME_INCREMENT);
 
     }
 
-    public static VideoCastManager getCastManager(Context context) {
+    private void initCastManager(Context context) {
         if (null == mCastMgr) {
             mCastMgr = VideoCastManager.initialize(context, APPLICATION_ID,
                     null, null);
             mCastMgr.enableFeatures(
                     VideoCastManager.FEATURE_NOTIFICATION |
                             VideoCastManager.FEATURE_LOCKSCREEN |
+                            VideoCastManager.FEATURE_WIFI_RECONNECT |
+                            VideoCastManager.FEATURE_CAPTIONS_PREFERENCE |
                             VideoCastManager.FEATURE_DEBUGGING);
 
+            String destroyOnExitStr = Utils.getStringFromPreference(context,
+                    CastPreference.TERMINATION_POLICY_KEY);
+            mCastMgr.setStopOnDisconnect(null != destroyOnExitStr
+                    && CastPreference.STOP_ON_DISCONNECT.equals(destroyOnExitStr));
         }
-        mCastMgr.setContext(context);
-        String destroyOnExitStr = Utils.getStringFromPreference(context,
-                CastPreference.TERMINATION_POLICY_KEY);
-        mCastMgr.setStopOnDisconnect(null != destroyOnExitStr
-                && CastPreference.STOP_ON_DISCONNECT.equals(destroyOnExitStr));
+    }
+
+    public static VideoCastManager getCastManager(Context context) {
+        if (null == mCastMgr) {
+            throw new IllegalStateException("Application has not been started");
+        }
         return mCastMgr;
     }
     

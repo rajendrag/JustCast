@@ -474,15 +474,15 @@ public class LocalPlayerActivity extends ActionBarActivity {
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 Log.e(TAG, "OnErrorListener.onError(): VideoView encountered an " +
                         "error, what: " + what + ", extra: " + extra);
-                String msg = "";
+                int msg = -1;
                 if (extra == MediaPlayer.MEDIA_ERROR_TIMED_OUT) {
-                    msg = getString(R.string.video_error_media_load_timeout);
+                    msg = R.string.video_error_media_load_timeout;
                 } else if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
-                    msg = getString(R.string.video_error_server_unaccessible);
+                    msg = R.string.video_error_server_unaccessible;
                 } else {
-                    msg = getString(R.string.video_error_unknown_error);
+                    msg = R.string.video_error_unknown_error;
                 }
-                Utils.showErrorDialog(LocalPlayerActivity.this, msg);
+                Utils.showToast(LocalPlayerActivity.this, msg);
                 mVideoView.stopPlayback();
                 mPlaybackState = PlaybackState.IDLE;
                 return false;

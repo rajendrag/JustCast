@@ -72,7 +72,7 @@ public class VideoBrowserActivity extends ActionBarActivity {
             public void onConnectionSuspended(int cause) {
                 Log.d(TAG, "onConnectionSuspended() was called with cause: " + cause);
                 JustCastUtils.
-                        showToast(VideoBrowserActivity.this, R.string.connection_temp_lost);
+                        showToast(VideoBrowserActivity.this, getString(R.string.connection_temp_lost));
             }
 
             @Override
@@ -102,7 +102,7 @@ public class VideoBrowserActivity extends ActionBarActivity {
         };
 
         setupActionBar(actionBar);
-        mCastManager.reconnectSessionIfPossible(this, false);
+        mCastManager.reconnectSessionIfPossible();
     }
 
     private void setupActionBar(ActionBar actionBar) {
@@ -186,7 +186,7 @@ public class VideoBrowserActivity extends ActionBarActivity {
         if (null != mCastManager) {
             mMini.removeOnMiniControllerChangedListener(mCastManager);
             mCastManager.removeMiniController(mMini);
-            mCastManager.clearContext(this);
+            mCastManager.clearContext();
         }
         super.onDestroy();
     }

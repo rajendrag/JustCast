@@ -189,7 +189,7 @@ public class JustCastUtils {
     /**
      * Returns the screen/display size
      *
-     * @param ctx
+     * @param context
      * @return
      */
     @SuppressWarnings("deprecation")
