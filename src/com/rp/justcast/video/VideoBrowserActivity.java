@@ -55,7 +55,7 @@ public class VideoBrowserActivity extends ActionBarActivity {
         setContentView(R.layout.video_browser);
         ActionBar actionBar = getSupportActionBar();
 
-        mCastManager = JustCast.getCastManager(this);
+        mCastManager = JustCast.getCastManager();
 
         // -- Adding MiniController
         mMini = (MiniController) findViewById(R.id.miniController1);
@@ -165,7 +165,7 @@ public class VideoBrowserActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume() was called");
-        mCastManager = JustCast.getCastManager(this);
+        mCastManager = JustCast.getCastManager();
         if (null != mCastManager) {
             mCastManager.addVideoCastConsumer(mCastConsumer);
             mCastManager.incrementUiCounter();

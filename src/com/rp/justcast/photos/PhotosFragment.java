@@ -125,7 +125,7 @@ public class PhotosFragment extends Fragment implements AdapterView.OnItemClickL
 	}
 
 	private void loadMedia(int position) {
-		VideoCastManager castManager = JustCast.getCastManager(getActivity());
+		VideoCastManager castManager = JustCast.getCastManager();
 		if (!castManager.isConnected()) {
 			JustCastUtils.showToast(getActivity(), R.string.no_device_to_cast);
 			return;

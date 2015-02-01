@@ -50,7 +50,7 @@ public class VideoBrowserListFragment extends ListFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	View v = super.onCreateView(inflater, container, savedInstanceState);
-    	mCastManager = JustCast.getCastManager(JustCast.getmAppContext());
+    	mCastManager = JustCast.getCastManager();
 		// -- Adding MiniController
 		mMini = (MiniController) getActivity().findViewById(R.id.miniController1);
 		mCastManager.addMiniController(mMini);

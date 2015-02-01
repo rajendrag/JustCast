@@ -79,7 +79,7 @@ public class GalleryTabFragment extends Fragment {
 		case 111:
 			JustCast.toggleSlideShow();
 			if (JustCast.isSlideShowEnabled()) {
-				if (!JustCast.getCastManager(getActivity()).isConnected()) {
+				if (!JustCast.getCastManager().isConnected()) {
 					Toast.makeText(getActivity(), R.string.no_device_to_cast, Toast.LENGTH_LONG).show();
 					JustCast.updateSlideShow(false);
 					item.setIcon(R.drawable.ic_av_play_light);

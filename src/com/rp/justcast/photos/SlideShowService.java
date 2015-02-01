@@ -34,7 +34,7 @@ public class SlideShowService extends IntentService {
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		if(null != photos && selectedPosition < photos.size() ) {
 			if(castManager == null) {
-				castManager = JustCast.getCastManager(this);
+				castManager = JustCast.getCastManager();
 			}
 			if (!castManager.isConnected()) {
 				JustCastUtils.showToast(this, R.string.no_device_to_cast);

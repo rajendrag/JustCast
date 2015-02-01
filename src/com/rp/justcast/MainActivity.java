@@ -70,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
 		VideoCastManager.checkGooglePlayServices(this);
 		final ActionBar actionBar = getSupportActionBar();
 
-		mCastManager = JustCast.getCastManager(this);
+		mCastManager = JustCast.getCastManager();
 		imageWorker = JustCast.initImageWorker(getSupportFragmentManager());
 		// -- Adding MiniController
 
@@ -237,7 +237,7 @@ public class MainActivity extends ActionBarActivity {
 		 * MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN);
 		 */
 		Log.d(TAG, "onResume() was called");
-		mCastManager = JustCast.getCastManager(this);
+		mCastManager = JustCast.getCastManager();
 		if (null != mCastManager) {
 			mCastManager.addVideoCastConsumer(mCastConsumer);
 			mCastManager.incrementUiCounter();

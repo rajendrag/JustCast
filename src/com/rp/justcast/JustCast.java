@@ -75,7 +75,7 @@ public class JustCast extends Application {
         }
     }
 
-    public static VideoCastManager getCastManager(Context context) {
+    public static VideoCastManager getCastManager() {
         if (null == mCastMgr) {
             throw new IllegalStateException("Application has not been started");
         }
