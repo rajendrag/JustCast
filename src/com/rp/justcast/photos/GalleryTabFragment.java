@@ -51,9 +51,9 @@ public class GalleryTabFragment extends Fragment {
 		MenuItem item = menu.add(Menu.NONE, 111, 10, R.string.slideshow);
 		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		if (JustCast.isSlideShowEnabled()) {
-			item.setIcon(R.drawable.ic_av_pause_light);
+			item.setIcon(R.drawable.ic_av_pause_dark);
 		} else {
-			item.setIcon(R.drawable.ic_av_play_light);
+			item.setIcon(R.drawable.ic_av_play_dark);
 		}
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		int albums = preferences.getInt(SHOW_ALBUMS, 0);
@@ -82,16 +82,16 @@ public class GalleryTabFragment extends Fragment {
 				if (!JustCast.getCastManager().isConnected()) {
 					Toast.makeText(getActivity(), R.string.no_device_to_cast, Toast.LENGTH_LONG).show();
 					JustCast.updateSlideShow(false);
-					item.setIcon(R.drawable.ic_av_play_light);
+					item.setIcon(R.drawable.ic_av_play_dark);
 				} else {
-					item.setIcon(R.drawable.ic_av_pause_light);
+					item.setIcon(R.drawable.ic_av_pause_dark);
 					Toast.makeText(getActivity(), R.string.select_start_image, Toast.LENGTH_LONG).show();
 				}
 			} else {
 				if (JustCast.isSlideShowInProgress()) {
 					JustCast.updateSlideShow(false);
 				}
-				item.setIcon(R.drawable.ic_av_play_light);
+				item.setIcon(R.drawable.ic_av_play_dark);
 			}
 			break;
 		case 112:

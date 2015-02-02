@@ -8,7 +8,7 @@ import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActionBarDrawerToggle;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
@@ -16,7 +16,9 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.media.MediaRouter.RouteInfo;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -61,6 +63,7 @@ public class MainActivity extends ActionBarActivity {
 	private MenuItem mediaRouteMenuItem;
 
 	private ImageWorker imageWorker;
+    private Toolbar mToolbar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +71,6 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 
 		VideoCastManager.checkGooglePlayServices(this);
-		final ActionBar actionBar = getSupportActionBar();
 
 		mCastManager = JustCast.getCastManager();
 		imageWorker = JustCast.initImageWorker(getSupportFragmentManager());
@@ -117,7 +119,7 @@ public class MainActivity extends ActionBarActivity {
 			}
 		};
 
-		setupActionBar(actionBar);
+		setupActionBar();
 		mCastManager.reconnectSessionIfPossible();
 
 		// getSupportActionBar();
@@ -146,27 +148,27 @@ public class MainActivity extends ActionBarActivity {
 		// Set the adapter for the list view
 		// Set the list's click listener
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeButtonEnabled(true);
 
-		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
 
 			public void onDrawerClosed(View view) {
 				super.onDrawerClosed(view);
-				actionBar.setTitle(mTitle);
+                Log.d(TAG, "Drawer Closed");
+				mToolbar.setTitle(mTitle);
 				invalidateOptionsMenu();
 			}
 
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-				actionBar.setTitle(mDrawerTitle);
+                Log.d(TAG, "Drawer Opened");
+                mToolbar.setTitle(mDrawerTitle);
 				invalidateOptionsMenu();
 			}
 		};
 
 		// Set the drawer toggle as the DrawerListener
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		// mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
 
 		// Configure Cast device discovery
 		/*
@@ -189,11 +191,13 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 
-	private void setupActionBar(ActionBar actionBar) {
-		//actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		actionBar.setIcon(R.drawable.ic_launcher);
-		actionBar.setDisplayShowTitleEnabled(false);
-	}
+    private void setupActionBar() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        //mToolbar.setLogo(R.drawable.ic_launcher);
+        mToolbar.setTitle(mTitle);
+        setSupportActionBar(mToolbar);
+    }
+
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
@@ -289,8 +293,8 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 	private void selectItem(int position) {
-		mDrawerList.setItemChecked(position, true);
-		switch (position) {
+		//mDrawerList.setItemChecked(position, true);
+        switch (position) {
 		case 0:
 			/*Fragment fg = new PhotosFragment();
 			FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
@@ -321,8 +325,9 @@ public class MainActivity extends ActionBarActivity {
 		default:
 			break;
 		}
-
-		setTitle(mMenuTitles[position]);
+        mTitle = mMenuTitles[position];
+        mToolbar.setTitle(mTitle);
+		setTitle(mTitle);
 		mDrawerLayout.closeDrawer(mDrawerList);
 	}
 

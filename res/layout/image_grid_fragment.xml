@@ -15,10 +15,13 @@
   limitations under the License.
 -->
 
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:layout_below="@id/toolbar">
+    <GridView
         android:id="@+id/imageGrid"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:columnWidth="100dp"
         android:gravity="center"
         android:horizontalSpacing="10dp"
@@ -26,6 +29,9 @@
         android:stretchMode="columnWidth"
         android:listSelector="@drawable/list_selector"
         android:verticalSpacing="10dp"
-        >
+        ></GridView>
 
-</GridView>
+</LinearLayout>
+
+
+
