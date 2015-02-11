@@ -41,20 +41,7 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-		<!--<activity
-            android:name="com.rp.justcast.photos.PhotosFragment"
-            android:label="@string/Photos" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>-->
-        <!-- <activity
-            android:name="com.rp.justcast.video.VideoBrowserActivity"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity> -->
+
         <activity
             android:name="com.rp.justcast.video.LocalPlayerActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode"
@@ -70,35 +57,12 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme">
-           <!--  android:parentActivityName="com.rp.justcast.video.VideoBrowserActivity"
-             >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.rp.justcast.video.VideoBrowserActivity" /> -->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
 
-        <!-- <receiver android:name="com.google.sample.castcompanionlibrary.remotecontrol.VideoIntentReceiver" >
-            <intent-filter>
-                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-                <action android:name="com.google.sample.castcompanionlibrary.action.toggleplayback" />
-                <action android:name="com.google.sample.castcompanionlibrary.action.stop" />
-            </intent-filter>
-        </receiver>
-
-        <service
-            android:name="com.google.sample.castcompanionlibrary.notification.VideoCastNotificationService"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.google.sample.castcompanionlibrary.action.toggleplayback" />
-                <action android:name="com.google.sample.castcompanionlibrary.action.stop" />
-                <action android:name="com.google.sample.castcompanionlibrary.action.notificationvisibility" />
-            </intent-filter>
-        </service> -->
         <service
             android:name="JustCastService"
             android:icon="@drawable/ic_launcher"
