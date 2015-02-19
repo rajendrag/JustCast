@@ -1,12 +1,15 @@
 package com.rp.justcast.photos;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,9 +30,12 @@ import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDi
 import com.rp.justcast.JustCast;
 import com.rp.justcast.JustCastUtils;
 import com.rp.justcast.R;
+import com.rp.justcast.compress.CompressingMediaHolder;
+import com.rp.justcast.compress.ImageCompressionTask;
+import com.rp.justcast.util.CircularByteBuffer;
 
 public class PhotosFragment extends Fragment implements AdapterView.OnItemClickListener {
-	private static final String TAG = "ImageGridFragment";
+	private static final String TAG = "PhotosFragment";
 
 	private ImageAdapter mAdapter;
 	private GridView mGridView;
@@ -132,9 +138,18 @@ public class PhotosFragment extends Fragment implements AdapterView.OnItemClickL
 		}
 		MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);
 		mediaMetadata.putString(MediaMetadata.KEY_TITLE, "picture");
-		String url = JustCast.addJustCastServerParam(mAdapter.itemList.get(position));
+        File f = new File(mAdapter.itemList.get(position));
+        String etag = JustCastUtils.getETag(f);
+        CircularByteBuffer cbb = new CircularByteBuffer(CircularByteBuffer.INFINITE_SIZE);
+        cbb.setOriginalFile(f);
+        //ImageCompressionTask task = new ImageCompressionTask();
+        //task.execute(cbb);
+        Log.d(TAG, "ETAG ["+etag+"] generated and in the map");
+        CompressedImage scabledImage = JustCastUtils.compressImage(cbb);
+        JustCast.getCompressingMediaHolder().put(etag, scabledImage);
+        String url = JustCast.addJustCastServerParam(mAdapter.itemList.get(position));
 		Log.d(TAG, "Content URL sending to chromecast" + url);
-		MediaInfo mediaInfo = new MediaInfo.Builder(url).setContentType("image/png").setStreamType(MediaInfo.STREAM_TYPE_BUFFERED).setMetadata(mediaMetadata).build();
+		MediaInfo mediaInfo = new MediaInfo.Builder(url).setContentType("image/jpeg").setStreamType(MediaInfo.STREAM_TYPE_BUFFERED).setMetadata(mediaMetadata).build();
 		try {
 			castManager.loadMedia(mediaInfo, true, 0);
 		} catch (TransientNetworkDisconnectionException e) {

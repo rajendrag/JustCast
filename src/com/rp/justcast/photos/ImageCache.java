@@ -594,7 +594,11 @@ public class ImageCache {
     @TargetApi(VERSION_CODES.KITKAT)
     public static int getBitmapSize(BitmapDrawable value) {
         Bitmap bitmap = value.getBitmap();
+        return getBitmapSize(bitmap);
+    }
 
+    @TargetApi(VERSION_CODES.KITKAT)
+    public static int getBitmapSize(Bitmap bitmap) {
         // From KitKat onward use getAllocationByteCount() as allocated bytes can potentially be
         // larger than bitmap byte count.
         if (JustCastUtils.hasKitKat()) {
@@ -608,7 +612,6 @@ public class ImageCache {
         // Pre HC-MR1
         return bitmap.getRowBytes() * bitmap.getHeight();
     }
-
     /**
      * Check if external storage is built-in or removable.
      *

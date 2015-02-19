@@ -67,7 +67,7 @@ public class SlideShowService extends IntentService {
 		mediaMetadata.putString(MediaMetadata.KEY_TITLE, "picture");
 		String url = JustCast.addJustCastServerParam(imagePath);
 		//Log.d(TAG, "Content URL sending to chromecast" + url);
-		MediaInfo mediaInfo = new MediaInfo.Builder(url).setContentType("image/png").setStreamType(MediaInfo.STREAM_TYPE_BUFFERED).setMetadata(mediaMetadata).build();
+		MediaInfo mediaInfo = new MediaInfo.Builder(url).setContentType("image/jpeg").setStreamType(MediaInfo.STREAM_TYPE_BUFFERED).setMetadata(mediaMetadata).build();
 		try {
 			castManager.loadMedia(mediaInfo, true, 0);
 		} catch (TransientNetworkDisconnectionException e) {

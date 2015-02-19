@@ -1,21 +1,24 @@
 package com.rp.justcast;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
+
+import com.rp.justcast.photos.CompressedImage;
+import com.rp.justcast.util.CircularByteBuffer;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
-import android.content.Context;
-import android.util.Log;
 
 public class JustCastWebServer extends AbstractWebServer {
 	private static final String TAG = "JustCastWebServer";
@@ -168,8 +171,10 @@ public class JustCastWebServer extends AbstractWebServer {
 	Response serveFile(String uri, Map<String, String> header, File file, String mime) {
 		Response res;
 		try {
+            Log.d(TAG, "Headers::"+header);
 			// Calculate etag
-			String etag = Integer.toHexString((file.getAbsolutePath() + file.lastModified() + "" + file.length()).hashCode());
+			String etag = JustCastUtils.getETag(file);
+
 			// Support (simple) skipping:
 			long startFrom = 0;
 			long endAt = -1;
@@ -190,7 +195,16 @@ public class JustCastWebServer extends AbstractWebServer {
 
 			// Change return code and add Content-Range header when skipping is
 			// requested
-			long fileLen = file.length();
+            InputStream is = null;
+            final CompressedImage cbb = JustCast.getCompressingMediaHolder().get(etag);
+
+            if (cbb != null) {
+                file = cbb.getImageFile();
+            } else {
+                Log.d(TAG, "ETAG["+etag+"] not found!!");
+            }
+            long fileLen = file.length();
+            Log.d(TAG, "Starts from "+startFrom+" End AT "+ endAt +" File Length "+fileLen);
 			if (range != null && startFrom >= 0) {
 				if (startFrom >= fileLen) {
 					res = createResponse(Response.Status.RANGE_NOT_SATISFIABLE, JustCastWebServer.MIME_PLAINTEXT, "");
@@ -206,35 +220,58 @@ public class JustCastWebServer extends AbstractWebServer {
 					}
 
 					final long dataLen = newLen;
-					FileInputStream fis = new FileInputStream(file) {
-						@Override
-						public int available() throws IOException {
-							return (int) dataLen;
-						}
-					};
-					fis.skip(startFrom);
-					Log.d(TAG, "Chunked Response Starts["+startFrom+"] ends ["+endAt+"]");
-					res = createResponse(Response.Status.PARTIAL_CONTENT, mime, fis);
+                    is = new FileInputStream(file) {
+                        @Override
+                        public int available() throws IOException {
+                            return (int) dataLen;
+                        }
+                    };
+                    /*if (cbb == null) {
+
+                    } else {
+                        is = new ByteArrayInputStream(cbb.getImageData()) {
+                            @Override
+                            public int available() {
+                                return (int) dataLen;
+                            }
+                        };
+                    }*/
+					is.skip(startFrom);
+					Log.d(TAG, "Chunked Response Starts["+startFrom+"] ends ["+endAt+"] data Length ["+dataLen+"]");
+					res = createResponse(Response.Status.PARTIAL_CONTENT, mime, is);
 					//res = createResponse(Response.Status.OK, mime, fis);
-					res.setChunkedTransfer(true);
-					res.addHeader("Connection", "close");
+					//res.setChunkedTransfer(true);
+					//res.addHeader("Connection", "close");
 					res.addHeader("Content-Length", "" + dataLen);
 					res.addHeader("Content-Range", "bytes " + startFrom + "-" + endAt + "/" + fileLen);
 					res.addHeader("ETag", etag);
 				}
 			} else {
-				if (etag.equals(header.get("if-none-match")))
-					res = createResponse(Response.Status.NOT_MODIFIED, mime, "");
-				else {
-					res = createResponse(Response.Status.OK, mime, new FileInputStream(file));
-					res.addHeader("Content-Length", "" + fileLen);
+				//if (etag.equals(header.get("if-none-match")))
+				//	res = createResponse(Response.Status.NOT_MODIFIED, mime, "");
+				//else {
+                    final long len = fileLen;
+                    is = new FileInputStream(file);
+                    /*if (cbb == null) {
+
+                    } else {
+                        is = new ByteArrayInputStream(cbb.getImageData()) {
+                            @Override
+                            public int available() {
+                                return (int) len;
+                            }
+                        };
+                    }*/
+                    Log.d(TAG, "Fixed response!!");
+                    res = createResponse(Response.Status.OK, mime, is);
+					res.addHeader("Content-Length", "" + len);
 					res.addHeader("ETag", etag);
-				}
+				//}
 			}
 		} catch (IOException ioe) {
 			res = createResponse(Response.Status.FORBIDDEN, JustCastWebServer.MIME_PLAINTEXT, "FORBIDDEN: Reading file failed.");
 		}
-		res.addHeader("Connection", "close");
+		//res.addHeader("Connection", "close");
 		return res;
 	}
 

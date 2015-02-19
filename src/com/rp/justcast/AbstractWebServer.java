@@ -44,6 +44,8 @@ import java.util.TimeZone;
 
 import android.util.Log;
 
+import com.rp.justcast.util.CircularByteBuffer;
+
 /**
  * A fork of NanoHttpd, but changed lot of stuff customize to JustCast needs and to improve the streaming performance.
  */
@@ -544,93 +546,104 @@ public abstract class AbstractWebServer {
 		/**
 		 * Sends given response to the socket.
 		 */
-		private void send(OutputStream outputStream) {
-			String mime = mimeType;
-			SimpleDateFormat gmtFrmt = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US);
-			gmtFrmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-			StringBuilder headers = new StringBuilder();
-			try {
-				if (status == null) {
-					throw new Error("sendResponse(): Status can't be null.");
-				}
-				PrintWriter pw = new PrintWriter(new BufferedOutputStream(outputStream, 32 * 1024));
-				pw.print("HTTP/1.1 " + status.getDescription() + " \r\n");
-				headers.append("HTTP/1.1 " + status.getDescription() + " \r\n");
-				if (mime != null) {
-					pw.print("Content-Type: " + mime + "\r\n");
-					headers.append("Content-Type: " + mime + "\r\n");
-				}
+        /**
+         * Sends given response to the socket.
+         */
+        protected void send(OutputStream outputStream) {
+            String mime = mimeType;
+            SimpleDateFormat gmtFrmt = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US);
+            gmtFrmt.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-				if (header == null || header.get("Date") == null) {
-					pw.print("Date: " + gmtFrmt.format(new Date()) + "\r\n");
-					headers.append("Date: " + gmtFrmt.format(new Date()) + "\r\n");
-				}
+            try {
+                if (status == null) {
+                    throw new Error("sendResponse(): Status can't be null.");
+                }
+                PrintWriter pw = new PrintWriter(outputStream);
+                pw.print("HTTP/1.1 " + status.getDescription() + " \r\n");
 
-				if (header != null) {
-					for (String key : header.keySet()) {
-						String value = header.get(key);
-						pw.print(key + ": " + value + "\r\n");
-						headers.append(key + ": " + value + "\r\n");
-					}
-				}
+                if (mime != null) {
+                    pw.print("Content-Type: " + mime + "\r\n");
+                }
 
-				// pw.print("Connection: keep-alive\r\n");
-				pw.print("Connection: close\r\n");
+                if (header == null || header.get("Date") == null) {
+                    pw.print("Date: " + gmtFrmt.format(new Date()) + "\r\n");
+                }
 
-				if (requestMethod != Method.HEAD && chunkedTransfer) {
-					sendAsChunked(outputStream, pw);
-				} else {
-					sendAsFixedLength(outputStream, pw);
-				}
+                if (header != null) {
+                    for (String key : header.keySet()) {
+                        String value = header.get(key);
+                        pw.print(key + ": " + value + "\r\n");
+                    }
+                }
 
-				 outputStream.flush();
-				safeClose(data);
-			} catch (Throwable ioe) {
-				Log.e(TAG, "Error while writing response", ioe);
-				// Couldn't write? No can do.
-			}
-		}
+                sendConnectionHeaderIfNotAlreadyPresent(pw, header);
 
-		private void sendAsChunked(OutputStream outputStream, PrintWriter pw) throws IOException {
-			pw.print("Transfer-Encoding: chunked\r\n");
-			pw.print("\r\n");
-			pw.flush();
-			int BUFFER_SIZE = 64 * 1024;
-			byte[] CRLF = "\r\n".getBytes();
-			byte[] buff = new byte[BUFFER_SIZE];
-			int read;
-			while ((read = data.read(buff)) > 0) {
-				outputStream.write(String.format("%x\r\n", read).getBytes());
-				outputStream.write(buff, 0, read);
-				outputStream.write(CRLF);
-			}
-			outputStream.write(String.format("0\r\n\r\n").getBytes());
-			//outputStream.flush();
-		}
+                if (requestMethod != Method.HEAD && chunkedTransfer) {
+                    sendAsChunked(outputStream, pw);
+                } else {
+                    int pending = data != null ? data.available() : 0;
+                    sendContentLengthHeaderIfNotAlreadyPresent(pw, header, pending);
+                    pw.print("\r\n");
+                    pw.flush();
+                    sendAsFixedLength(outputStream, pending);
+                }
+                outputStream.flush();
+                safeClose(data);
+            } catch (IOException ioe) {
+                // Couldn't write? No can do.
+            }
+        }
 
-		private void sendAsFixedLength(OutputStream outputStream, PrintWriter pw) throws IOException {
-			int pending = data != null ? data.available() : 0; // This is to support partial sends, see serveFile()
-			Log.d(TAG, "Sending pending data " + pending);
-			pw.print("Content-Length: " + pending + "\r\n");
+        protected void sendContentLengthHeaderIfNotAlreadyPresent(PrintWriter pw, Map<String, String> header, int size) {
+            if (!headerAlreadySent(header, "content-length")) {
+                pw.print("Content-Length: "+ size +"\r\n");
+            }
+        }
 
-			pw.print("\r\n");
-			pw.flush();
+        protected void sendConnectionHeaderIfNotAlreadyPresent(PrintWriter pw, Map<String, String> header) {
+            if (!headerAlreadySent(header, "connection")) {
+                pw.print("Connection: keep-alive\r\n");
+            }
+        }
 
-			if (requestMethod != Method.HEAD && data != null) {
-				int BUFFER_SIZE = 64 * 1024;
-				byte[] buff = new byte[BUFFER_SIZE];
-				while (pending > 0) {
-					int read = data.read(buff, 0, ((pending > BUFFER_SIZE) ? BUFFER_SIZE : pending));
-					if (read <= 0) {
-						break;
-					}
-					outputStream.write(buff, 0, read);
-					// outputStream.flush();
-					pending -= read;
-					Log.d(TAG, "Sent " + read);
-				}
-			}
-		}
+        private boolean headerAlreadySent(Map<String, String> header, String name) {
+            boolean alreadySent = false;
+            for (String headerName : header.keySet()) {
+                alreadySent |= headerName.equalsIgnoreCase(name);
+            }
+            return alreadySent;
+        }
+
+        private void sendAsChunked(OutputStream outputStream, PrintWriter pw) throws IOException {
+            pw.print("Transfer-Encoding: chunked\r\n");
+            pw.print("\r\n");
+            pw.flush();
+            int BUFFER_SIZE = 16 * 1024;
+            byte[] CRLF = "\r\n".getBytes();
+            byte[] buff = new byte[BUFFER_SIZE];
+            int read;
+            while ((read = data.read(buff)) > 0) {
+                outputStream.write(String.format("%x\r\n", read).getBytes());
+                outputStream.write(buff, 0, read);
+                outputStream.write(CRLF);
+            }
+            outputStream.write(String.format("0\r\n\r\n").getBytes());
+        }
+
+        private void sendAsFixedLength(OutputStream outputStream, int pending) throws IOException {
+            if (requestMethod != Method.HEAD && data != null) {
+                int BUFFER_SIZE = 16 * 1024;
+                byte[] buff = new byte[BUFFER_SIZE];
+                while (pending > 0) {
+                    int read = data.read(buff, 0, ((pending > BUFFER_SIZE) ? BUFFER_SIZE : pending));
+                    if (read <= 0) {
+                        break;
+                    }
+                    outputStream.write(buff, 0, read);
+                    pending -= read;
+                }
+            }
+        }
 
 		public Status getStatus() {
 			return status;
