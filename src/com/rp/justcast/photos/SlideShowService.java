@@ -8,7 +8,7 @@ import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
 import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
 import com.rp.justcast.JustCast;
-import com.rp.justcast.JustCastUtils;
+import com.rp.justcast.util.JustCastUtils;
 import com.rp.justcast.R;
 
 import android.app.IntentService;
@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class SlideShowService extends IntentService {
 	private static final String SLIDE_SHOW_INTERVAL = "com.rp.justcast.ssInterval";

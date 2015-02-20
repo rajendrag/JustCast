@@ -16,7 +16,6 @@
 
 package com.rp.justcast.video;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
@@ -32,7 +31,7 @@ import com.google.sample.castcompanionlibrary.cast.callbacks.IVideoCastConsumer;
 import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
 import com.google.sample.castcompanionlibrary.widgets.MiniController;
 import com.rp.justcast.JustCast;
-import com.rp.justcast.JustCastUtils;
+import com.rp.justcast.util.JustCastUtils;
 import com.rp.justcast.R;
 import com.rp.justcast.settings.CastPreference;
 

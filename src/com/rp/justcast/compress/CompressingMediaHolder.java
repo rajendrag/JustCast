@@ -3,7 +3,6 @@ package com.rp.justcast.compress;
 import android.graphics.Bitmap;
 
 import com.rp.justcast.photos.CompressedImage;
-import com.rp.justcast.util.CircularByteBuffer;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

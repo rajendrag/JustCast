@@ -1,38 +1,23 @@
 package com.rp.justcast.photos;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.google.android.gms.cast.MediaInfo;
-import com.google.android.gms.cast.MediaMetadata;
-import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
-import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
-import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
 import com.rp.justcast.JustCast;
-import com.rp.justcast.JustCastUtils;
 import com.rp.justcast.R;
-import com.rp.justcast.compress.CompressingMediaHolder;
-import com.rp.justcast.compress.ImageCompressionTask;
-import com.rp.justcast.util.CircularByteBuffer;
+import com.rp.justcast.util.JustCastUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PhotosFragment extends Fragment implements AdapterView.OnItemClickListener {
 	private static final String TAG = "PhotosFragment";
@@ -118,10 +103,14 @@ public class PhotosFragment extends Fragment implements AdapterView.OnItemClickL
 				Toast t = Toast.makeText(getActivity(), "Slideshow is in-progress", Toast.LENGTH_SHORT);
 				t.show();
 			} else {
-				Intent slideShowIntent = new Intent(getActivity(), SlideShowService.class);
+                SlideShow slideShow = new SlideShow(((ImageAdapter)mAdapter).itemList, position);
+                JustCast.setSlidShowObj(slideShow);
+                slideShow.start();
+                JustCast.setSlideShowInProgress(true);
+				/*Intent slideShowIntent = new Intent(getActivity(), SlideShowService.class);
 				slideShowIntent.putExtra("photosList", ((ImageAdapter)mAdapter).itemList);
 				slideShowIntent.putExtra("selectedPosition", position);
-				getActivity().startService(slideShowIntent);
+				getActivity().startService(slideShowIntent);*/
 			}
 		} else {
 			loadMedia(position);
@@ -131,32 +120,8 @@ public class PhotosFragment extends Fragment implements AdapterView.OnItemClickL
 	}
 
 	private void loadMedia(int position) {
-		VideoCastManager castManager = JustCast.getCastManager();
-		if (!castManager.isConnected()) {
-			JustCastUtils.showToast(getActivity(), R.string.no_device_to_cast);
-			return;
-		}
-		MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);
-		mediaMetadata.putString(MediaMetadata.KEY_TITLE, "picture");
         File f = new File(mAdapter.itemList.get(position));
-        String etag = JustCastUtils.getETag(f);
-        CircularByteBuffer cbb = new CircularByteBuffer(CircularByteBuffer.INFINITE_SIZE);
-        cbb.setOriginalFile(f);
-        //ImageCompressionTask task = new ImageCompressionTask();
-        //task.execute(cbb);
-        Log.d(TAG, "ETAG ["+etag+"] generated and in the map");
-        CompressedImage scabledImage = JustCastUtils.compressImage(cbb);
-        JustCast.getCompressingMediaHolder().put(etag, scabledImage);
-        String url = JustCast.addJustCastServerParam(mAdapter.itemList.get(position));
-		Log.d(TAG, "Content URL sending to chromecast" + url);
-		MediaInfo mediaInfo = new MediaInfo.Builder(url).setContentType("image/jpeg").setStreamType(MediaInfo.STREAM_TYPE_BUFFERED).setMetadata(mediaMetadata).build();
-		try {
-			castManager.loadMedia(mediaInfo, true, 0);
-		} catch (TransientNetworkDisconnectionException e) {
-			// e.printStackTrace();
-		} catch (NoConnectionException e) {
-			// e.printStackTrace();
-		}
+		JustCastUtils.compressAndLoadMedia(f);
 	}
 
 	

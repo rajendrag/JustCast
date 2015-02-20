@@ -2,16 +2,17 @@ package com.rp.justcast.compress;
 
 import android.os.AsyncTask;
 
-import com.rp.justcast.JustCastUtils;
-import com.rp.justcast.util.CircularByteBuffer;
+import com.rp.justcast.util.JustCastUtils;
+
+import java.io.File;
 
 /**
  * Created by rp on 2/14/15.
  */
-public class ImageCompressionTask extends AsyncTask<CircularByteBuffer, Void, Void>{
+public class ImageCompressionTask extends AsyncTask<File, Void, Void>{
     @Override
-    protected Void doInBackground(CircularByteBuffer... params) {
-        CircularByteBuffer in = params[0];
+    protected Void doInBackground(File... params) {
+        File in = params[0];
         JustCastUtils.compressImage(in);
         return null;
     }

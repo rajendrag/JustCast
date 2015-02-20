@@ -20,7 +20,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.media.MediaPlayer;
@@ -60,7 +59,7 @@ import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerIm
 import com.google.sample.castcompanionlibrary.utils.Utils;
 import com.google.sample.castcompanionlibrary.widgets.MiniController;
 import com.rp.justcast.JustCast;
-import com.rp.justcast.JustCastUtils;
+import com.rp.justcast.util.JustCastUtils;
 import com.rp.justcast.R;
 
 public class LocalPlayerActivity extends ActionBarActivity {

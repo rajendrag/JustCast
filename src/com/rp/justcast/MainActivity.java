@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.media.MediaRouter.RouteInfo;
@@ -34,6 +33,7 @@ import com.rp.justcast.music.MusicFragment;
 import com.rp.justcast.photos.GalleryTabFragment;
 import com.rp.justcast.photos.ImageWorker;
 import com.rp.justcast.settings.CastPreference;
+import com.rp.justcast.util.JustCastUtils;
 import com.rp.justcast.video.VideoBrowserListFragment;
 
 /**

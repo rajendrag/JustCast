@@ -17,6 +17,7 @@ import com.google.sample.castcompanionlibrary.utils.Utils;
 import com.rp.justcast.compress.CompressingMediaHolder;
 import com.rp.justcast.photos.ImageCache;
 import com.rp.justcast.photos.ImageWorker;
+import com.rp.justcast.photos.SlideShow;
 import com.rp.justcast.settings.CastPreference;
 
 public class JustCast extends Application {
@@ -38,10 +39,11 @@ public class JustCast extends Application {
     public static final String KEY_AUDIO_PATH_URL	= "AUDIO_PATH_URL";
     public static final String KEY_VIDEO_PATH_URL	= "VIDEO_PATH_URL";
 
-    private static boolean slideShow = false;
+    private static boolean slideShowVar = false;
     private static boolean slideShowInProgress = false;
 
     private static CompressingMediaHolder compressingMediaHolder;
+    private static SlideShow slidShowObj;
 
     /*
      * (non-Javadoc)
@@ -163,14 +165,14 @@ public class JustCast extends Application {
     }
 
     public static  boolean isSlideShowEnabled() {
-        return slideShow;
+        return slideShowVar;
     }
 
     public static void toggleSlideShow() {
-        if(slideShow) {
+        if(slideShowVar) {
             slideShowInProgress = false;
         }
-        slideShow = !slideShow;
+        slideShowVar = !slideShowVar;
     }
 
     public static boolean isSlideShowInProgress() {
@@ -183,12 +185,12 @@ public class JustCast extends Application {
 
     public static void updateSlideShow(boolean enable) {
         if(enable) {
-            slideShow = true;
+            slideShowVar = true;
             slideShowInProgress = true;
         } else {
             Toast t = Toast.makeText(mAppContext, "Slideshow ended", Toast.LENGTH_SHORT);
             t.show();
-            slideShow = false;
+            slideShowVar = false;
             slideShowInProgress = false;
         }
     }
@@ -203,5 +205,13 @@ public class JustCast extends Application {
 
     public static void setCompressingMediaHolder(CompressingMediaHolder compressingMediaHolder) {
         JustCast.compressingMediaHolder = compressingMediaHolder;
+    }
+
+    public static SlideShow getSlidShowObj() {
+        return slidShowObj;
+    }
+
+    public static void setSlidShowObj(SlideShow slidShowObj) {
+        JustCast.slidShowObj = slidShowObj;
     }
 }

@@ -23,7 +23,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.rp.justcast.BuildConfig;
-import com.rp.justcast.JustCastUtils;
+import com.rp.justcast.util.JustCastUtils;
 
 import android.content.Context;
 import android.content.res.Resources;

@@ -26,7 +26,11 @@ public class JCCastConsumer implements IVideoCastConsumer {
     @Override
     public void onDataMessageReceived(String message) {
         Log.d(TAG, "Media played successfully");
-
+        if (JustCast.isSlideShowInProgress()) {
+            if (null != JustCast.getSlidShowObj()) {
+                JustCast.getSlidShowObj().sendNext();
+            }
+        }
     }
 
     @Override

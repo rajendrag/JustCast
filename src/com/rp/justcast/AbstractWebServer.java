@@ -44,8 +44,6 @@ import java.util.TimeZone;
 
 import android.util.Log;
 
-import com.rp.justcast.util.CircularByteBuffer;
-
 /**
  * A fork of NanoHttpd, but changed lot of stuff customize to JustCast needs and to improve the streaming performance.
  */

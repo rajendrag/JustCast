@@ -33,8 +33,8 @@ import android.support.v4.util.LruCache;
 import android.util.Log;
 
 import com.rp.justcast.DiskLruCache;
-import com.rp.justcast.JustCastUtils;
-import com.rp.justcast.RecyclingBitmapDrawable;
+import com.rp.justcast.util.JustCastUtils;
+import com.rp.justcast.util.RecyclingBitmapDrawable;
 
 import java.io.File;
 import java.io.FileDescriptor;

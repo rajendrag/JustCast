@@ -1,12 +1,4 @@
-package com.rp.justcast;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+package com.rp.justcast.util;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -27,12 +19,22 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
+import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.exceptions.CastException;
 import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
 import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
+import com.rp.justcast.JustCast;
+import com.rp.justcast.R;
 import com.rp.justcast.photos.CompressedImage;
 import com.rp.justcast.photos.ImageCache;
-import com.rp.justcast.util.CircularByteBuffer;
+
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class JustCastUtils {
 
@@ -224,8 +226,33 @@ public class JustCastUtils {
         return Integer.toHexString((file.getAbsolutePath() + file.lastModified() + "" + file.length()).hashCode());
     }
 
+    public static void compressAndLoadMedia(File f) {
+        VideoCastManager castManager = JustCast.getCastManager();
+        if (!castManager.isConnected()) {
+            showToast(JustCast.getmAppContext(), R.string.no_device_to_cast);
+            return;
+        }
+        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_PHOTO);
+        mediaMetadata.putString(MediaMetadata.KEY_TITLE, "picture");
+        String etag = getETag(f);
+        //ImageCompressionTask task = new ImageCompressionTask();
+        //task.execute(cbb);
+        Log.d(TAG, "ETAG ["+etag+"] generated and in the map");
+        CompressedImage scabledImage = compressImage(f);
+        JustCast.getCompressingMediaHolder().put(etag, scabledImage);
+        String url = JustCast.addJustCastServerParam(f.getAbsolutePath());
+        Log.d(TAG, "Content URL sending to chromecast" + url);
+        MediaInfo mediaInfo = new MediaInfo.Builder(url).setContentType("image/jpeg").setStreamType(MediaInfo.STREAM_TYPE_BUFFERED).setMetadata(mediaMetadata).build();
+        try {
+            castManager.loadMedia(mediaInfo, true, 0);
+        } catch (TransientNetworkDisconnectionException e) {
+            // e.printStackTrace();
+        } catch (NoConnectionException e) {
+            // e.printStackTrace();
+        }
+    }
 
-    public static CompressedImage compressImage(CircularByteBuffer cbb) {
+    public static CompressedImage compressImage(File cbb) {
 
         Bitmap scaledBitmap = null;
 
@@ -234,7 +261,7 @@ public class JustCastUtils {
 //      by setting this field as true, the actual bitmap pixels are not loaded in the memory. Just the bounds are loaded. If
 //      you try the use the bitmap here, you will get null.
         options.inJustDecodeBounds = true;
-        String filePath = cbb.getOriginalFile().getAbsolutePath();
+        String filePath = cbb.getAbsolutePath();
         Bitmap bmp = BitmapFactory.decodeFile(filePath, options);
         int actualHeight = options.outHeight;
         int actualWidth = options.outWidth;

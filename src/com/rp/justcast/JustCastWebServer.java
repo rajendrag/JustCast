@@ -1,14 +1,11 @@
 package com.rp.justcast;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.rp.justcast.photos.CompressedImage;
-import com.rp.justcast.util.CircularByteBuffer;
+import com.rp.justcast.util.JustCastUtils;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
