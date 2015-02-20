@@ -323,7 +323,7 @@ public class JustCastUtils {
 
         Matrix scaleMatrix = new Matrix();
         scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
-
+        //TODO: Check we need to draw the image on canvas ?
         Canvas canvas = new Canvas(scaledBitmap);
         canvas.setMatrix(scaleMatrix);
         canvas.drawBitmap(bmp, middleX - bmp.getWidth() / 2, middleY - bmp.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
@@ -360,7 +360,6 @@ public class JustCastUtils {
             img = new CompressedImage(outputFile);
             bos.flush();
             bos.close();
-            new CompressedImage(outputFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
