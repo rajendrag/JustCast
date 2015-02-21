@@ -1,6 +1,7 @@
 package com.rp.justcast.photos;
 
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
@@ -36,7 +37,7 @@ public class SlideShow {
     }
 
     public void sendNext() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(JustCast.getmAppContext());
+
         if (position <= queue.size()) {
             if(castManager == null) {
                 castManager = JustCast.getCastManager();
@@ -47,10 +48,8 @@ public class SlideShow {
                 return;
             }
             //JustCast.setSlideShowInProgress(true);
-            final int currentInterval = preferences.getInt(SLIDE_SHOW_INTERVAL, 6);
-            SystemClock.sleep(currentInterval * 1000);
-            loadMedia(queue.get(position));
-
+            String file = queue.get(position);
+            new SlideShowSenderTask().execute(file);
         } else {
             JustCast.updateSlideShow(false);
         }
@@ -64,6 +63,19 @@ public class SlideShow {
             // compress and send
             File f = new File(filePath);
             JustCastUtils.compressAndLoadMedia(f);
+        }
+    }
+
+    private class SlideShowSenderTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            String path = params[0];
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(JustCast.getmAppContext());
+            final int currentInterval = preferences.getInt(SLIDE_SHOW_INTERVAL, 6);
+            SystemClock.sleep(currentInterval * 1000);
+            loadMedia(path);
+            return null;
         }
     }
 }
