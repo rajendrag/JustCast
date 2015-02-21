@@ -79,7 +79,7 @@ public class JustCast extends Application {
                     CastPreference.TERMINATION_POLICY_KEY);
             mCastMgr.setStopOnDisconnect(null != destroyOnExitStr
                     && CastPreference.STOP_ON_DISCONNECT.equals(destroyOnExitStr));
-            mCastMgr.addVideoCastConsumer(new JCCastConsumer());
+            //mCastMgr.addVideoCastConsumer(new JCCastConsumer());
         }
     }
 

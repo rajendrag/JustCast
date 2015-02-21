@@ -81,43 +81,7 @@ public class MainActivity extends ActionBarActivity {
 		 * mCastManager.addMiniController(mMini);
 		 */
 
-		mCastConsumer = new VideoCastConsumerImpl() {
-
-			@Override
-			public void onFailed(int resourceId, int statusCode) {
-				JustCastUtils.showToast(MainActivity.this, "Connection failed");
-			}
-
-			@Override
-			public void onConnectionSuspended(int cause) {
-				Log.d(TAG, "onConnectionSuspended() was called with cause: " + cause);
-				JustCastUtils.showToast(MainActivity.this, R.string.connection_temp_lost);
-			}
-
-			@Override
-			public void onConnectivityRecovered() {
-				JustCastUtils.showToast(MainActivity.this, R.string.connection_recovered);
-			}
-
-			@Override
-			public void onCastDeviceDetected(final RouteInfo info) {
-				if (!CastPreference.isFtuShown(MainActivity.this)) {
-					CastPreference.setFtuShown(MainActivity.this);
-
-					Log.d(TAG, "Route is visible: " + info);
-					new Handler().postDelayed(new Runnable() {
-
-						@Override
-						public void run() {
-							if (mediaRouteMenuItem.isVisible()) {
-								Log.d(TAG, "Cast Icon is visible: " + info.getName());
-								// showFtu();
-							}
-						}
-					}, 1000);
-				}
-			}
-		};
+		mCastConsumer = new JCCastConsumer();
 
 		setupActionBar();
 		mCastManager.reconnectSessionIfPossible();
@@ -313,13 +277,13 @@ public class MainActivity extends ActionBarActivity {
 			 */
 			ListFragment lf = VideoBrowserListFragment.newInstance();
 			FragmentTransaction vTx = getSupportFragmentManager().beginTransaction();
-			vTx.replace(R.id.content_frame, lf);
+			vTx.replace(R.id.content_frame, lf).addToBackStack(null);
 			vTx.commit();
 			break;
 		case 2:
 			Fragment mf = new MusicFragment();
 			FragmentTransaction mTx = getSupportFragmentManager().beginTransaction();
-			mTx.replace(R.id.content_frame, mf);
+			mTx.replace(R.id.content_frame, mf).addToBackStack(null);
 			mTx.commit();
 			break;
 		default:
