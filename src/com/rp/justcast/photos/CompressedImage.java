@@ -9,8 +9,6 @@ public class CompressedImage {
 
     private int byteCount;
 
-    private byte[] imageData;
-
     private File imageFile;
 
     public File getImageFile() {
@@ -33,11 +31,4 @@ public class CompressedImage {
         this.byteCount = byteCount;
     }
 
-    public byte[] getImageData() {
-        return imageData;
-    }
-
-    public void setImageData(byte[] imageData) {
-        this.imageData = imageData;
-    }
 }

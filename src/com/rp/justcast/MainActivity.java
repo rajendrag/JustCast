@@ -7,16 +7,15 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.os.Handler;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.media.MediaRouter.RouteInfo;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -28,12 +27,9 @@ import android.widget.ListView;
 
 import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
 import com.google.sample.castcompanionlibrary.cast.callbacks.IVideoCastConsumer;
-import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
 import com.rp.justcast.music.MusicFragment;
 import com.rp.justcast.photos.GalleryTabFragment;
 import com.rp.justcast.photos.ImageWorker;
-import com.rp.justcast.settings.CastPreference;
-import com.rp.justcast.util.JustCastUtils;
 import com.rp.justcast.video.VideoBrowserListFragment;
 
 /**
@@ -64,6 +60,8 @@ public class MainActivity extends ActionBarActivity {
 
 	private ImageWorker imageWorker;
     private Toolbar mToolbar;
+
+    private int backStackTitle = -1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -132,19 +130,6 @@ public class MainActivity extends ActionBarActivity {
 
 		// Set the drawer toggle as the DrawerListener
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-
-		// Configure Cast device discovery
-		/*
-		 * mMediaRouter = MediaRouter.getInstance(getApplicationContext());
-		 * mMediaRouteSelector = new
-		 * MediaRouteSelector.Builder().addControlCategory
-		 * (CastMediaControlIntent
-		 * .categoryForCast(getResources().getString(R.string.app_id)))
-		 * .addControlCategory(CastMediaControlIntent.CATEGORY_CAST).build();
-		 * mMediaRouterCallback = new MyMediaRouterCallback();
-		 */
-
 		if (savedInstanceState == null) {
 			selectItem(0);
 		}
@@ -258,50 +243,56 @@ public class MainActivity extends ActionBarActivity {
 
 	private void selectItem(int position) {
 		//mDrawerList.setItemChecked(position, true);
+        backStackTitle = position;
+        mTitle = mMenuTitles[position];
+        mToolbar.setTitle(mTitle);
+        setTitle(mTitle);
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        FragmentTransaction ftx = supportFragmentManager.beginTransaction();
+        addBackStackListener(supportFragmentManager);
         switch (position) {
 		case 0:
-			/*Fragment fg = new PhotosFragment();
-			FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-			tx.replace(R.id.content_frame, fg);
-			tx.commit();*/
 			Fragment fg = new GalleryTabFragment();
-			FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-			tx.replace(R.id.content_frame, fg, "GalleryTabFragment");
-			tx.commit();
+			supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			ftx.replace(R.id.content_frame, fg, "GalleryTabFragment");
+			ftx.commit();
 			break;
 		case 1:
-			/*
-			 * Fragment vf = new VideoLayoutFragment(); FragmentTransaction vtx
-			 * = getSupportFragmentManager().beginTransaction();
-			 * vtx.replace(R.id.content_frame, vf); vtx.commit();
-			 */
 			ListFragment lf = VideoBrowserListFragment.newInstance();
-			FragmentTransaction vTx = getSupportFragmentManager().beginTransaction();
-			vTx.replace(R.id.content_frame, lf).addToBackStack(null);
-			vTx.commit();
+			supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			ftx.replace(R.id.content_frame, lf).addToBackStack(null);
+			ftx.commit();
 			break;
 		case 2:
 			Fragment mf = new MusicFragment();
-			FragmentTransaction mTx = getSupportFragmentManager().beginTransaction();
-			mTx.replace(R.id.content_frame, mf).addToBackStack(null);
-			mTx.commit();
+            supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			ftx.replace(R.id.content_frame, mf).addToBackStack(null);
+			ftx.commit();
 			break;
 		default:
 			break;
 		}
-        mTitle = mMenuTitles[position];
-        mToolbar.setTitle(mTitle);
-		setTitle(mTitle);
 		mDrawerLayout.closeDrawer(mDrawerList);
 	}
 
-	public class DrawerItemClickListener implements OnItemClickListener {
+    private void addBackStackListener(final FragmentManager fragmentManager) {
+        fragmentManager.addOnBackStackChangedListener(
+                new FragmentManager.OnBackStackChangedListener() {
+                    public void onBackStackChanged() {
+                        Log.d(TAG, "BackStackListener: position "+ backStackTitle);
+                        if (backStackTitle != -1 && backStackTitle < mMenuTitles.length) {
+                            mToolbar.setTitle(mMenuTitles[backStackTitle]);
+                        }
+                        backStackTitle = -1;
+                    }
+                });
+    }
+
+    public class DrawerItemClickListener implements OnItemClickListener {
 
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			selectItem(position);
-			// Toast.makeText(view.getContext(), "" + position,
-			// Toast.LENGTH_SHORT).show();
 		}
 
 	}
