@@ -34,7 +34,7 @@ public class MusicDetailsFragment extends ListFragment implements LoaderManager.
 		super.onActivityCreated(savedInstanceState);
 		getListView().setFastScrollEnabled(true);
 		musicDetailsAdapter = new MusicDetailsAdapter(getActivity());
-		setEmptyText(getString(R.string.no_video_found));
+		setEmptyText(getString(R.string.no_music_found));
 		setListAdapter(musicDetailsAdapter);
 		setListShown(false);
 		getLoaderManager().initLoader(0, null, this);

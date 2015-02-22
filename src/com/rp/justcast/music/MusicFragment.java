@@ -22,6 +22,7 @@ public class MusicFragment extends ListFragment  implements LoaderManager.Loader
 		super.onActivityCreated(savedInstanceState);
 		getListView().setFastScrollEnabled(true);
 		musicAlbumsAdapter = new MusicAlbumsAdapter(getActivity());
+        setEmptyText("No Music");
 		setListAdapter(musicAlbumsAdapter);
 		setListShown(false);
 		getLoaderManager().initLoader(0, null, this);

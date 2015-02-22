@@ -33,6 +33,7 @@
     <string name="connection_lost_retry">Connection to the cast device has been temporarily lost. Application is trying to reover connection, please try again later</string>
     <string name="Photos">Photos</string>
     <string name="no_video_found">No Videos</string>
+    <string name="no_music_found">No Music</string>
     <string name="connection_lost">No Connection</string>
     <string name="failed_to_perfrom_action">Cant take Action</string>
     <string name="oops">Problem</string>
