@@ -218,7 +218,7 @@ public class JustCastUtils {
     }
 
 	public static Bitmap decodeSampledBitmapFromVideo(String videoPath) {
-		Bitmap bmThumbnail = ThumbnailUtils.createVideoThumbnail(videoPath, Thumbnails.MICRO_KIND);
+		Bitmap bmThumbnail = ThumbnailUtils.createVideoThumbnail(videoPath, Thumbnails.MINI_KIND);
 		return bmThumbnail;
 	}
 
@@ -356,7 +356,7 @@ public class JustCastUtils {
             try {
                 File outputFile = File.createTempFile("temp_", "jpg", externalCacheDir);
                 OutputStream bos = new FileOutputStream(outputFile);
-                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
                 Log.d(TAG, "Compressed image size ====>"+ImageCache.getBitmapSize(scaledBitmap));
                 img = new CompressedImage(outputFile);
                 bos.flush();

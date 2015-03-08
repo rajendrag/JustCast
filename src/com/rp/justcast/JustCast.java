@@ -27,7 +27,8 @@ public class JustCast extends Application {
     public static final double VOLUME_INCREMENT = 0.05;
     private static Context mAppContext;
 
-    private static ImageWorker imageWorker = null;
+    private static ImageWorker imageWorker;
+
     private static final String IMAGE_CACHE_DIR = "thumbs";
 
     private static String myHost = "";
@@ -90,18 +91,14 @@ public class JustCast extends Application {
         return mCastMgr;
     }
 
-    public static ImageWorker initImageWorker(FragmentManager fragmentManger) {
-        if(imageWorker == null) {
+    public static ImageWorker getImageWorker(FragmentManager fragmentManger) {
+        if(null == imageWorker) {
             ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(mAppContext, IMAGE_CACHE_DIR);
             cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
             imageWorker = new ImageWorker(mAppContext);
             imageWorker.setLoadingImage(R.drawable.empty_photo);
             imageWorker.addImageCache(fragmentManger, cacheParams);
         }
-        return imageWorker;
-    }
-
-    public static ImageWorker getImageWorker() {
         return imageWorker;
     }
 

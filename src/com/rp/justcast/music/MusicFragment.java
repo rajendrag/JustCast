@@ -11,7 +11,9 @@ import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
 
+import com.rp.justcast.JustCast;
 import com.rp.justcast.R;
+import com.rp.justcast.photos.ImageWorker;
 
 public class MusicFragment extends ListFragment  implements LoaderManager.LoaderCallbacks<List<MusicAlbum>> {
 	private static final String TAG = MusicFragment.class.getSimpleName();
@@ -21,7 +23,8 @@ public class MusicFragment extends ListFragment  implements LoaderManager.Loader
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		getListView().setFastScrollEnabled(true);
-		musicAlbumsAdapter = new MusicAlbumsAdapter(getActivity());
+        ImageWorker imageWorker = JustCast.getImageWorker(getFragmentManager());
+		musicAlbumsAdapter = new MusicAlbumsAdapter(getActivity(), imageWorker);
         setEmptyText("No Music");
 		setListAdapter(musicAlbumsAdapter);
 		setListShown(false);

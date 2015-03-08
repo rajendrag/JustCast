@@ -22,10 +22,10 @@ public class MusicDetailsAdapter extends ArrayAdapter<MusicAlbum> {
 	String albumId;
 	
 	
-	public MusicDetailsAdapter(Context context) {
+	public MusicDetailsAdapter(Context context, ImageWorker imageWorker) {
 		super(context, 0);
 		mContext = context;
-		imageWorker = JustCast.getImageWorker();
+		this.imageWorker = imageWorker;
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {

@@ -20,10 +20,10 @@ public class MusicAlbumsAdapter extends ArrayAdapter<MusicAlbum> {
 	Context mContext;
 	ImageWorker imageWorker;
 
-	public MusicAlbumsAdapter(Context context) {
+	public MusicAlbumsAdapter(Context context, ImageWorker imageWorker) {
 		super(context, 0);
 		mContext = context;
-		imageWorker = JustCast.getImageWorker();
+		this.imageWorker = imageWorker;
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {

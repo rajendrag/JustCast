@@ -20,7 +20,8 @@ import com.rp.justcast.JustCast;
 
 public class ImageAdapter extends BaseAdapter {
 	private static final String TAG = "MainActivity";
-	public ImageWorker imageWorker;
+
+    public ImageWorker imageWorker;
 	private final Context mContext;
 	public ArrayList<String> itemList = new ArrayList<String>();
 
@@ -28,11 +29,12 @@ public class ImageAdapter extends BaseAdapter {
 	private int mNumColumns = 0;
 	private int mActionBarHeight = 0;
 
-	public ImageAdapter(Context context, String albumName) {
+	public ImageAdapter(Context context, ImageWorker imageWorker, String albumName) {
 		super();
 		mContext = context;
-		imageWorker = JustCast.getImageWorker();
-		// Calculate ActionBar height
+        this.imageWorker = imageWorker;
+
+        // Calculate ActionBar height
 		TypedValue tv = new TypedValue();
 		if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
 			mActionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, context.getResources().getDisplayMetrics());
@@ -40,10 +42,10 @@ public class ImageAdapter extends BaseAdapter {
 		initThumbnails(albumName);
 	}
 	
-	public ImageAdapter(Context context, ArrayList<String> imagesInAlbum) {
+	public ImageAdapter(Context context, ImageWorker imageWorker, ArrayList<String> imagesInAlbum) {
 		super();
 		mContext = context;
-		imageWorker = JustCast.getImageWorker();
+		this.imageWorker = imageWorker;
 		// Calculate ActionBar height
 		TypedValue tv = new TypedValue();
 		if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
@@ -119,6 +121,7 @@ public class ImageAdapter extends BaseAdapter {
 	}
 
 	public void loadBitmap(String resId, ImageView imageView) {
-		imageWorker.loadImage(resId, imageView);
+        imageWorker.loadImage(resId, imageView);
 	}
+
 }

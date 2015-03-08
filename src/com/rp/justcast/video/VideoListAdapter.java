@@ -44,12 +44,12 @@ public class VideoListAdapter extends ArrayAdapter<MediaInfo> {
 
 	/**
 	 * @param context
-	 * @param resource
+	 * @param
 	 */
-	public VideoListAdapter(Context context) {
+	public VideoListAdapter(Context context, ImageWorker imageWorker) {
 		super(context, 0);
 		this.mContext = context;
-		imageWorker = JustCast.getImageWorker();
+		this.imageWorker = imageWorker;
 	}
 
 	/*
@@ -69,7 +69,11 @@ public class VideoListAdapter extends ArrayAdapter<MediaInfo> {
 			convertView = inflater.inflate(R.layout.browse_row, null);
 			holder = new ViewHolder();
 			holder.imgView = (ImageView) convertView.findViewById(R.id.imageView1);
-			holder.titleView = (TextView) convertView.findViewById(R.id.textView1);
+            ViewGroup.LayoutParams layoutParams = holder.imgView.getLayoutParams();
+            layoutParams.width = 200;
+            layoutParams.height = 200;
+            holder.imgView.setLayoutParams(layoutParams);
+            holder.titleView = (TextView) convertView.findViewById(R.id.textView1);
 			holder.descrView = (TextView) convertView.findViewById(R.id.textView2);
 			convertView.setTag(holder);
 		} else {

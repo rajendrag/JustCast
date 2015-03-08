@@ -53,10 +53,11 @@ public class PhotosFragment extends Fragment implements AdapterView.OnItemClickL
 		super.onCreate(savedInstanceState);
 		String albumName = getArguments().getString("albumName");
 		ArrayList<String> imagesInAlbum = getArguments().getStringArrayList("images");
+        ImageWorker imageWorker = JustCast.getImageWorker(getFragmentManager());
 		if (imagesInAlbum == null) {
-			mAdapter = new ImageAdapter(getActivity(), albumName);
+			mAdapter = new ImageAdapter(getActivity(), imageWorker, albumName);
 		} else {
-			mAdapter = new ImageAdapter(getActivity(), imagesInAlbum);
+			mAdapter = new ImageAdapter(getActivity(), imageWorker, imagesInAlbum);
 		}
 	}
 

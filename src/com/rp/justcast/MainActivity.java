@@ -71,7 +71,7 @@ public class MainActivity extends ActionBarActivity {
 		VideoCastManager.checkGooglePlayServices(this);
 
 		mCastManager = JustCast.getCastManager();
-		imageWorker = JustCast.initImageWorker(getSupportFragmentManager());
+		imageWorker = JustCast.getImageWorker(getSupportFragmentManager());
 		// -- Adding MiniController
 
 		/*

@@ -489,7 +489,6 @@ public class ImageWorker {
 		}
 
 		if (value != null) {
-			// Bitmap found in memory cache
 			imageView.setImageDrawable(value);
 		} else if (cancelPotentialWork(path, imageView)) {
 			final BitmapWorkerTask task = new BitmapWorkerTask(path, imageView, true);

@@ -38,7 +38,7 @@ public class SlideShow {
 
     public void sendNext() {
 
-        if (position <= queue.size()) {
+        if (position < queue.size()) {
             if(castManager == null) {
                 castManager = JustCast.getCastManager();
             }

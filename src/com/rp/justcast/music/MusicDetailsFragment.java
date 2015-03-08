@@ -19,6 +19,7 @@ import com.google.android.gms.common.images.WebImage;
 import com.google.sample.castcompanionlibrary.utils.Utils;
 import com.rp.justcast.JustCast;
 import com.rp.justcast.R;
+import com.rp.justcast.photos.ImageWorker;
 import com.rp.justcast.video.LocalPlayerActivity;
 
 public class MusicDetailsFragment extends ListFragment implements LoaderManager.LoaderCallbacks<List<MusicAlbum>> {
@@ -33,7 +34,8 @@ public class MusicDetailsFragment extends ListFragment implements LoaderManager.
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		getListView().setFastScrollEnabled(true);
-		musicDetailsAdapter = new MusicDetailsAdapter(getActivity());
+        ImageWorker imageWorker = JustCast.getImageWorker(getFragmentManager());
+		musicDetailsAdapter = new MusicDetailsAdapter(getActivity(), imageWorker);
 		setEmptyText(getString(R.string.no_music_found));
 		setListAdapter(musicDetailsAdapter);
 		setListShown(false);
