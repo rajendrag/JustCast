@@ -9,6 +9,7 @@ import org.apache.http.conn.util.InetAddressUtils;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
@@ -91,13 +92,18 @@ public class JustCast extends Application {
         return mCastMgr;
     }
 
-    public static ImageWorker getImageWorker(FragmentManager fragmentManger) {
+    public static ImageWorker getImageWorker() {
         if(null == imageWorker) {
-            ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(mAppContext, IMAGE_CACHE_DIR);
-            cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
-            imageWorker = new ImageWorker(mAppContext);
-            imageWorker.setLoadingImage(R.drawable.empty_photo);
-            imageWorker.addImageCache(fragmentManger, cacheParams);
+            try {
+                FragmentManager fragmentManager = ((FragmentActivity)mAppContext).getSupportFragmentManager();
+                ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(mAppContext, IMAGE_CACHE_DIR);
+                cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
+                imageWorker = new ImageWorker(mAppContext);
+                imageWorker.setLoadingImage(R.drawable.empty_photo);
+                imageWorker.addImageCache(fragmentManager, cacheParams);
+            } catch (ClassCastException e) {
+
+            }
         }
         return imageWorker;
     }

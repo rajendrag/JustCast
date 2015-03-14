@@ -68,7 +68,7 @@ public class VideoBrowserListFragment extends ListFragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getListView().setFastScrollEnabled(true);
-        ImageWorker imageWorker = JustCast.getImageWorker(getFragmentManager());
+        ImageWorker imageWorker = JustCast.getImageWorker();
         mAdapter = new VideoListAdapter(getActivity(), imageWorker);
         setEmptyText(getString(R.string.no_video_found));
         setListAdapter(mAdapter);

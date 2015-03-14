@@ -34,7 +34,7 @@ public class MusicDetailsFragment extends ListFragment implements LoaderManager.
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		getListView().setFastScrollEnabled(true);
-        ImageWorker imageWorker = JustCast.getImageWorker(getFragmentManager());
+        ImageWorker imageWorker = JustCast.getImageWorker();
 		musicDetailsAdapter = new MusicDetailsAdapter(getActivity(), imageWorker);
 		setEmptyText(getString(R.string.no_music_found));
 		setListAdapter(musicDetailsAdapter);
