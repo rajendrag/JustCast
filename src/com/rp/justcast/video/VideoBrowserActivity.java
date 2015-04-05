@@ -26,10 +26,10 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
-import com.google.sample.castcompanionlibrary.cast.callbacks.IVideoCastConsumer;
-import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
-import com.google.sample.castcompanionlibrary.widgets.MiniController;
+import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
+import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumer;
+import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumerImpl;
+import com.google.android.libraries.cast.companionlibrary.widgets.MiniController;
 import com.rp.justcast.JustCast;
 import com.rp.justcast.util.JustCastUtils;
 import com.rp.justcast.R;
@@ -39,7 +39,7 @@ public class VideoBrowserActivity extends ActionBarActivity {
 
     private static final String TAG = "VideoBrowserActivity";
     private VideoCastManager mCastManager;
-    private IVideoCastConsumer mCastConsumer;
+    private VideoCastConsumer mCastConsumer;
     private MiniController mMini;
     private MenuItem mediaRouteMenuItem;
 
@@ -54,7 +54,7 @@ public class VideoBrowserActivity extends ActionBarActivity {
         setContentView(R.layout.video_browser);
         ActionBar actionBar = getSupportActionBar();
 
-        mCastManager = JustCast.getCastManager();
+        mCastManager = VideoCastManager.getInstance();
 
         // -- Adding MiniController
         mMini = (MiniController) findViewById(R.id.miniController1);
@@ -136,35 +136,17 @@ public class VideoBrowserActivity extends ActionBarActivity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (!mCastManager.isConnected()) {
-            return super.onKeyDown(keyCode, event);
-        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            changeVolume(JustCast.VOLUME_INCREMENT);
-        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            changeVolume(-JustCast.VOLUME_INCREMENT);
-        } else {
-            return super.onKeyDown(keyCode, event);
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (mCastManager.onDispatchVolumeKeyEvent(event, JustCast.VOLUME_INCREMENT)) {
+            return true;
         }
-        return true;
-    }
-
-    private void changeVolume(double volumeIncrement) {
-        if (mCastManager == null) {
-            return;
-        }
-        try {
-            mCastManager.incrementVolume(volumeIncrement);
-        } catch (Exception e) {
-            Log.e(TAG, "onVolumeChange() Failed to change volume", e);
-            JustCastUtils.handleException(this, e);
-        }
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume() was called");
-        mCastManager = JustCast.getCastManager();
+        mCastManager = VideoCastManager.getInstance();
         if (null != mCastManager) {
             mCastManager.addVideoCastConsumer(mCastConsumer);
             mCastManager.incrementUiCounter();
@@ -185,7 +167,6 @@ public class VideoBrowserActivity extends ActionBarActivity {
         if (null != mCastManager) {
             mMini.removeOnMiniControllerChangedListener(mCastManager);
             mCastManager.removeMiniController(mMini);
-            mCastManager.clearContext();
         }
         super.onDestroy();
     }

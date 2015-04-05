@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
-import com.google.sample.castcompanionlibrary.utils.Utils;
+import com.google.android.libraries.cast.companionlibrary.utils.Utils;
 import com.rp.justcast.JustCast;
 import com.rp.justcast.R;
 import com.rp.justcast.photos.ImageWorker;
@@ -139,7 +139,7 @@ public class MusicDetailsFragment extends ListFragment implements LoaderManager.
 		MediaInfo mediaInfo = new MediaInfo.Builder(path).setStreamType(MediaInfo.STREAM_TYPE_BUFFERED).setContentType(getMediaType()).setMetadata(mm).build();
 		try {
 			Intent intent = new Intent(getActivity(), LocalPlayerActivity.class);
-	        intent.putExtra("media", Utils.fromMediaInfo(mediaInfo));
+	        intent.putExtra("media", Utils.mediaInfoToBundle(mediaInfo));
 	        intent.putExtra("shouldStart", autoStart);
 	        getActivity().startActivity(intent);
 			//castManager.loadMedia(mediaInfo, true, 0);

@@ -3,6 +3,8 @@
 
     <string name="app_name">JustCast</string>
     <string name="app_id">ABB80A79</string>
+    <string name="error">Error</string>
+    <string name="ok">OK</string>
     <string name="namespace">urn:x-cast:com.google.cast.media</string>
     <string name="action_settings">Settings</string>
     <string name="slideshow">Slideshow</string>
@@ -41,4 +43,9 @@
     <string name="video_error_server_unaccessible">Server not responding</string>
     <string name="video_error_unknown_error">Video can not be played</string>
     <string name="no_device_to_cast">No Device selected to cast, Please use the cast icon at the top to select the device</string>
+    <string name="failed_to_find_app">Failed to find JustCast</string>
+    <string name="failed_app_launch_timeout">The request to launch the application has timed out!</string>
+    <string name="failed_to_launch_app">Failed to launch JustCast</string>
+    <string name="failed_to_connect">Could not connect to the device</string>
+    <string name="failed_to_perform_action">Sorry, ran into issues performing the task you wanted</string>
 </resources>

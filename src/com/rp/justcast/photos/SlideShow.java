@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
-import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
+import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 import com.rp.justcast.JustCast;
 import com.rp.justcast.R;
 import com.rp.justcast.util.JustCastUtils;
@@ -40,7 +40,7 @@ public class SlideShow {
 
         if (position < queue.size()) {
             if(castManager == null) {
-                castManager = JustCast.getCastManager();
+                castManager = VideoCastManager.getInstance();
             }
             if (!castManager.isConnected()) {
                 JustCastUtils.showToast(JustCast.getmAppContext(), R.string.no_device_to_cast);

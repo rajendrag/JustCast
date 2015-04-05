@@ -25,8 +25,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
-import com.google.sample.castcompanionlibrary.cast.callbacks.IVideoCastConsumer;
+import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
+import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumer;
 import com.rp.justcast.music.MusicFragment;
 import com.rp.justcast.photos.GalleryTabFragment;
 import com.rp.justcast.photos.ImageWorker;
@@ -54,7 +54,7 @@ public class MainActivity extends ActionBarActivity {
 	private MenuAdapter menuAdapter;
 
 	private VideoCastManager mCastManager;
-	private IVideoCastConsumer mCastConsumer;
+	private VideoCastConsumer mCastConsumer;
 	//private MiniController mMini;
 	private MenuItem mediaRouteMenuItem;
 
@@ -70,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
 
 		VideoCastManager.checkGooglePlayServices(this);
 
-		mCastManager = JustCast.getCastManager();
+		mCastManager = VideoCastManager.getInstance();
 		imageWorker = JustCast.getImageWorker();
 		// -- Adding MiniController
 
@@ -190,7 +190,7 @@ public class MainActivity extends ActionBarActivity {
 		 * MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN);
 		 */
 		Log.d(TAG, "onResume() was called");
-		mCastManager = JustCast.getCastManager();
+		mCastManager = VideoCastManager.getInstance();
 		if (null != mCastManager) {
 			mCastManager.addVideoCastConsumer(mCastConsumer);
 			mCastManager.incrementUiCounter();
@@ -226,7 +226,6 @@ public class MainActivity extends ActionBarActivity {
 				mMini.removeOnMiniControllerChangedListener(mCastManager);
 			}
 			mCastManager.removeMiniController(mMini);*/
-			mCastManager.clearContext(this);
 		}
 		imageWorker.closeCache();
 		super.onDestroy();

@@ -21,10 +21,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
-import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
-import com.google.sample.castcompanionlibrary.cast.exceptions.CastException;
-import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
-import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
+import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
+import com.google.android.libraries.cast.companionlibrary.cast.exceptions.CastException;
+import com.google.android.libraries.cast.companionlibrary.cast.exceptions.NoConnectionException;
+import com.google.android.libraries.cast.companionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
 import com.rp.justcast.JustCast;
 import com.rp.justcast.R;
 import com.rp.justcast.photos.CompressedImage;
@@ -111,8 +111,26 @@ public class JustCastUtils {
 		return inSampleSize;
 
 	}
-	
-	
+
+    /**
+     * Shows an error dialog with a given text message.
+     *
+     * @param context
+     * @param errorString
+     */
+    public static final void showErrorDialog(Context context, String errorString) {
+        new AlertDialog.Builder(context).setTitle(R.string.error)
+                .setMessage(errorString)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                })
+                .create()
+                .show();
+    }
+
 	 /**
      * Shows a (long) toast
      *
@@ -158,7 +176,20 @@ public class JustCastUtils {
     public static boolean hasKitKat() {
         return Build.VERSION.SDK_INT >= VERSION_CODES.KITKAT;
     }
-    
+
+    /**
+     * A utility method to handle a few types of exceptions that are commonly thrown by the cast
+     * APIs in this library. It has special treatments for
+     * {@link TransientNetworkDisconnectionException}, {@link NoConnectionException} and shows an
+     * "Oops" dialog conveying certain messages to the user. The following resource IDs can be used
+     * to control the messages that are shown:
+     * <p>
+     * <ul>
+     * <li><code>R.string.connection_lost_retry</code></li>
+     * <li><code>R.string.connection_lost</code></li>
+     * <li><code>R.string.failed_to_perform_action</code></li>
+     * </ul>
+     */
     public static void handleException(Context context, Exception e) {
         int resourceId = 0;
         if (e instanceof TransientNetworkDisconnectionException) {
@@ -172,10 +203,10 @@ public class JustCastUtils {
                 e instanceof IOException ||
                 e instanceof CastException) {
             // something more serious happened
-            resourceId = R.string.failed_to_perfrom_action;
+            resourceId = R.string.failed_to_perform_action;
         } else {
             // well, who knows!
-            resourceId = R.string.failed_to_perfrom_action;
+            resourceId = R.string.failed_to_perform_action;
         }
         if (resourceId > 0) {
             showOopsDialog(context, resourceId);
@@ -228,7 +259,7 @@ public class JustCastUtils {
     }
 
     public static void compressAndLoadMedia(File f) {
-        VideoCastManager castManager = JustCast.getCastManager();
+        VideoCastManager castManager = VideoCastManager.getInstance();
         if (!castManager.isConnected()) {
             showToast(JustCast.getmAppContext(), R.string.no_device_to_cast);
             return;

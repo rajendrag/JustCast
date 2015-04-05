@@ -30,9 +30,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.cast.MediaInfo;
-import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
-import com.google.sample.castcompanionlibrary.utils.Utils;
-import com.google.sample.castcompanionlibrary.widgets.MiniController;
+import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
+import com.google.android.libraries.cast.companionlibrary.utils.Utils;
+import com.google.android.libraries.cast.companionlibrary.widgets.MiniController;
 import com.rp.justcast.JustCast;
 import com.rp.justcast.R;
 import com.rp.justcast.photos.ImageWorker;
@@ -51,7 +51,7 @@ public class VideoBrowserListFragment extends ListFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        mCastManager = JustCast.getCastManager();
+        mCastManager = VideoCastManager.getInstance();
         // -- Adding MiniController
         mMini = (MiniController) getActivity().findViewById(R.id.miniController1);
         mCastManager.addMiniController(mMini);
@@ -117,7 +117,7 @@ public class VideoBrowserListFragment extends ListFragment implements
 
     private void handleNavigation(MediaInfo info, boolean autoStart) {
         Intent intent = new Intent(getActivity(), LocalPlayerActivity.class);
-        intent.putExtra("media", Utils.fromMediaInfo(info));
+        intent.putExtra("media", Utils.mediaInfoToBundle(info));
         intent.putExtra("shouldStart", autoStart);
         getActivity().startActivity(intent);
     }

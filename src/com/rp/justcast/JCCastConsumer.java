@@ -4,16 +4,10 @@ import android.os.Handler;
 import android.support.v7.media.MediaRouter;
 import android.util.Log;
 
-import com.google.android.gms.cast.ApplicationMetadata;
-import com.google.android.gms.cast.CastDevice;
-import com.google.android.gms.cast.TextTrackStyle;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.sample.castcompanionlibrary.cast.callbacks.IVideoCastConsumer;
-import com.google.sample.castcompanionlibrary.cast.callbacks.VideoCastConsumerImpl;
+import com.google.android.gms.cast.CastStatusCodes;
+import com.google.android.libraries.cast.companionlibrary.cast.callbacks.VideoCastConsumerImpl;
 import com.rp.justcast.settings.CastPreference;
 import com.rp.justcast.util.JustCastUtils;
-
-import java.util.Locale;
 
 /**
  * Created by rp on 2/14/15.
@@ -27,13 +21,25 @@ public class JCCastConsumer extends VideoCastConsumerImpl {
         super.onDataMessageSendFailed(errorCode);
     }
 
-    @Override
+    /*@Override
     public void onDataMessageReceived(String message) {
         Log.d(TAG, "Media played successfully");
         super.onDataMessageReceived(message);
         if (JustCast.isSlideShowInProgress()) {
             if (null != JustCast.getSlidShowObj()) {
                 JustCast.getSlidShowObj().sendNext();
+            }
+        }
+    }*/
+
+    @Override
+    public void onMediaLoadResult(int statusCode) {
+        if(statusCode == CastStatusCodes.SUCCESS) {
+            Log.d(TAG, "Media played successfully");
+            if (JustCast.isSlideShowInProgress()) {
+                if (null != JustCast.getSlidShowObj()) {
+                    JustCast.getSlidShowObj().sendNext();
+                }
             }
         }
     }

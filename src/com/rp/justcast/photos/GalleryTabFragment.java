@@ -19,6 +19,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 import com.rp.justcast.JustCast;
 import com.rp.justcast.R;
 
@@ -79,7 +80,7 @@ public class GalleryTabFragment extends Fragment {
 		case 111:
 			JustCast.toggleSlideShow();
 			if (JustCast.isSlideShowEnabled()) {
-				if (!JustCast.getCastManager().isConnected()) {
+				if (!VideoCastManager.getInstance().isConnected()) {
 					Toast.makeText(getActivity(), R.string.no_device_to_cast, Toast.LENGTH_LONG).show();
 					JustCast.updateSlideShow(false);
 					item.setIcon(R.drawable.ic_av_play_dark);

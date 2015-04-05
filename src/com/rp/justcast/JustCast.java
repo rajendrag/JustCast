@@ -13,13 +13,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
-import com.google.sample.castcompanionlibrary.cast.VideoCastManager;
-import com.google.sample.castcompanionlibrary.utils.Utils;
+import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 import com.rp.justcast.compress.CompressingMediaHolder;
 import com.rp.justcast.photos.ImageCache;
 import com.rp.justcast.photos.ImageWorker;
 import com.rp.justcast.photos.SlideShow;
-import com.rp.justcast.settings.CastPreference;
 
 public class JustCast extends Application {
 
@@ -60,9 +58,6 @@ public class JustCast extends Application {
         setmAppContext(getApplicationContext());
         APPLICATION_ID = getString(R.string.app_id);
         initCastManager(getApplicationContext());
-        Utils.saveFloatToPreference(getApplicationContext(),
-                VideoCastManager.PREFS_KEY_VOLUME_INCREMENT, (float) VOLUME_INCREMENT);
-
         compressingMediaHolder = new CompressingMediaHolder();
     }
 
@@ -77,20 +72,15 @@ public class JustCast extends Application {
                             VideoCastManager.FEATURE_CAPTIONS_PREFERENCE |
                             VideoCastManager.FEATURE_DEBUGGING);
 
-            String destroyOnExitStr = Utils.getStringFromPreference(context,
-                    CastPreference.TERMINATION_POLICY_KEY);
-            mCastMgr.setStopOnDisconnect(null != destroyOnExitStr
-                    && CastPreference.STOP_ON_DISCONNECT.equals(destroyOnExitStr));
-            //mCastMgr.addVideoCastConsumer(new JCCastConsumer());
         }
     }
 
-    public static VideoCastManager getCastManager() {
+    /*public static VideoCastManager getCastManager() {
         if (null == mCastMgr) {
             throw new IllegalStateException("Application has not been started");
         }
         return mCastMgr;
-    }
+    }*/
 
     public static ImageWorker getImageWorker() {
         if(null == imageWorker) {
